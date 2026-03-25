@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Upload</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+
+<h1>Subir y escuchar audios</h1>
+
+<input type="file" id="fileInput" accept="audio/*">
+<button onclick="uploadAudio()">Subir</button>
+
+<h2>Audios:</h2>
+<div id="audioList"></div>
+
+<script>
+const SUPABASE_URL = "https://jxdtrqowhjayvybjrghb.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// SUBIR AUDIO
+async function uploadAudio() {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) return alert("Selecciona un archivo");
+
+  const fileName = Date.now() + "-" + file.name;
+
+  // Subir a storage
+  const { data, error } = await supabaseClient
+    .storage
+    .from('QUIO')
+    .upload(fileName, file);
+
+  if (error) {
+    console.error("UPLOAD ERROR:", error);
+    alert(error.message);
+    return;
+  }
+
+  // Obtener URL pública
+  const { data: publicUrlData } = supabaseClient
+    .storage
+    .from('QUIO')
+    .getPublicUrl(fileName);
+
+  const fileUrl = publicUrlData.publicUrl;
+
+  // Guardar en DB
+  const { error: dbError } = await supabaseClient
+    .from('EZE')
+    .insert([{ Audio: fileUrl }]);
+
+  if (dbError) {
+    console.error("DB ERROR:", dbError);
+  }
+
+  loadAudios();
+}
+
+// CARGAR AUDIOS
+async function loadAudios() {
+  const { data, error } = await supabaseClient
+    .from('EZE')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("LOAD ERROR:", error);
+    return;
+  }
+
+  const container = document.getElementById("audioList");
+  container.innerHTML = "";
+
+  data.forEach(audio => {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <audio controls src="${audio.Audio}"></audio>
+      <hr>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+// INIT
+loadAudios();
+
+</script>
+
+</body>
+</html>
