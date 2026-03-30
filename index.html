@@ -2,95 +2,548 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Audio Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎵 QUIO Audio</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #FDF6EC;
+      --warm:     #F5EAD7;
+      --peach:    #F4A97F;
+      --coral:    #E8744A;
+      --rust:     #C75B35;
+      --text:     #3A2A1D;
+      --muted:    #9C7E68;
+      --card-bg:  #FFFAF4;
+      --shadow:   0 8px 32px rgba(58,42,29,0.10);
+      --radius:   20px;
+    }
+
+    body {
+      background: var(--cream);
+      background-image:
+        radial-gradient(ellipse 60% 40% at 20% 10%, #FDDCBC55 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 90%, #F4A97F22 0%, transparent 60%);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px 80px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown .6s ease both;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--coral);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+    }
+
+    h1 span { color: var(--coral); }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── UPLOAD CARD ── */
+    .upload-card {
+      background: var(--card-bg);
+      border: 2px dashed #E8C4A8;
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow);
+      transition: border-color .25s, box-shadow .25s;
+      animation: fadeUp .6s .1s ease both;
+      position: relative;
+    }
+
+    .upload-card.drag-over {
+      border-color: var(--coral);
+      box-shadow: 0 0 0 4px #E8744A18, var(--shadow);
+    }
+
+    .upload-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #FDE8D5, #FDDCBC);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      transition: transform .3s;
+    }
+
+    .upload-card:hover .upload-icon { transform: scale(1.08) rotate(-4deg); }
+
+    .upload-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .upload-hint {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* hidden native input */
+    #fileInput { display: none; }
+
+    .file-trigger {
+      background: var(--warm);
+      border: 1.5px solid #E0C9B0;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+
+    .file-trigger:hover {
+      background: #EDE0CC;
+      border-color: var(--peach);
+    }
+
+    .file-name {
+      font-size: 13px;
+      color: var(--coral);
+      font-weight: 500;
+      min-height: 18px;
+      text-align: center;
+    }
+
+    .btn-upload {
+      background: linear-gradient(135deg, var(--coral), var(--peach));
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px #E8744A44;
+      transition: transform .2s, box-shadow .2s, opacity .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-upload:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px #E8744A55;
+    }
+
+    .btn-upload:active { transform: translateY(0); }
+    .btn-upload:disabled { opacity: .55; cursor: default; transform: none; }
+
+    /* spinner */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #ffffff66;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    /* progress bar */
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: #F0E0CE;
+      border-radius: 100px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--coral), var(--peach));
+      border-radius: 100px;
+      transition: width .4s ease;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: #fff;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 100px;
+      opacity: 0;
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error { background: var(--rust); }
+
+    /* ── LIST SECTION ── */
+    .list-section {
+      width: 100%;
+      max-width: 520px;
+      margin-top: 40px;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .list-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--text);
+    }
+
+    .count-badge {
+      background: var(--warm);
+      border: 1.5px solid #E0C9B0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    /* audio item */
+    .audio-item {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeUp .35s ease both;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .audio-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(58,42,29,0.14);
+    }
+
+    .audio-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .audio-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #FDDCBC, #F4A97F);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .audio-filename {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .audio-date {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* override native audio */
+    audio {
+      width: 100%;
+      height: 40px;
+      border-radius: 100px;
+      accent-color: var(--coral);
+    }
+
+    /* empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #F0E0CE 25%, #FDDCBC 50%, #F0E0CE 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+      height: 80px;
+      margin-bottom: 14px;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:none; } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px); }  to { opacity:1; transform:none; } }
+  </style>
 </head>
 <body>
 
-<h1>Subir y escuchar audios</h1>
+  <header>
+    <div class="logo-badge">🎵 QUIO Audio</div>
+    <h1>Sube y escucha<br><span>tus audios</span></h1>
+    <p class="subtitle">Tu colección de sonidos, siempre contigo</p>
+  </header>
 
-<input type="file" id="fileInput" accept="audio/*">
-<button onclick="uploadAudio()">Subir</button>
+  <!-- Upload card -->
+  <div class="upload-card" id="dropZone">
+    <div class="upload-icon">🎙️</div>
+    <p class="upload-label">Arrastra tu audio aquí</p>
+    <p class="upload-hint">o elige un archivo desde tu dispositivo<br>MP3, WAV, M4A, OGG…</p>
 
-<h2>Audios:</h2>
-<div id="audioList"></div>
+    <input type="file" id="fileInput" accept="audio/*">
+    <label class="file-trigger" for="fileInput">Elegir archivo</label>
+    <div class="file-name" id="fileName">Ningún archivo seleccionado</div>
+
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <button class="btn-upload" id="uploadBtn" onclick="uploadAudio()" disabled>
+      <span class="spinner" id="spinner"></span>
+      <span id="btnText">Subir audio</span>
+    </button>
+  </div>
+
+  <!-- List -->
+  <div class="list-section">
+    <div class="list-header">
+      <span class="list-title">Tu colección</span>
+      <span class="count-badge" id="countBadge">— pistas</span>
+    </div>
+    <div id="audioList"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = "https://jxdtrqowhjayvybjrghb.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
+  const SUPABASE_URL = "https://jxdtrqowhjayvybjrghb.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // ── FILE SELECTION ──
+  const fileInput   = document.getElementById("fileInput");
+  const fileNameEl  = document.getElementById("fileName");
+  const uploadBtn   = document.getElementById("uploadBtn");
+  const dropZone    = document.getElementById("dropZone");
 
-// SUBIR AUDIO
-async function uploadAudio() {
-  const file = document.getElementById("fileInput").files[0];
-  if (!file) return alert("Selecciona un archivo");
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files[0];
+    if (f) {
+      fileNameEl.textContent = f.name;
+      uploadBtn.disabled = false;
+    }
+  });
 
-  const fileName = Date.now() + "-" + file.name;
+  // ── DRAG & DROP ──
+  dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+  dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropZone.classList.remove("drag-over");
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith("audio/")) {
+      // inject into input
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      fileInput.files = dt.files;
+      fileNameEl.textContent = f.name;
+      uploadBtn.disabled = false;
+    }
+  });
 
-  // Subir a storage
-  const { data, error } = await supabaseClient
-    .storage
-    .from('QUIO')
-    .upload(fileName, file);
+  // ── UPLOAD ──
+  async function uploadAudio() {
+    const file = fileInput.files[0];
+    if (!file) return showToast("Selecciona un archivo primero 🎵", true);
 
-  if (error) {
-    console.error("UPLOAD ERROR:", error);
-    alert(error.message);
-    return;
+    setLoading(true);
+    fakeProgress();
+
+    const fileName = Date.now() + "-" + file.name;
+
+    const { data, error } = await supabaseClient
+      .storage.from('QUIO').upload(fileName, file);
+
+    if (error) {
+      setLoading(false);
+      return showToast(error.message, true);
+    }
+
+    const { data: publicUrlData } = supabaseClient
+      .storage.from('QUIO').getPublicUrl(fileName);
+
+    const fileUrl = publicUrlData.publicUrl;
+
+    const { error: dbError } = await supabaseClient
+      .from('EZE').insert([{ Audio: fileUrl }]);
+
+    setLoading(false);
+    document.getElementById("progressBar").style.width = "100%";
+    setTimeout(() => {
+      document.getElementById("progressWrap").style.display = "none";
+      document.getElementById("progressBar").style.width = "0%";
+    }, 600);
+
+    if (dbError) return showToast("Error al guardar en base de datos", true);
+
+    fileNameEl.textContent = "Ningún archivo seleccionado";
+    fileInput.value = "";
+    uploadBtn.disabled = true;
+    showToast("¡Audio subido con éxito! 🎉");
+    loadAudios();
   }
 
-  // Obtener URL pública
-  const { data: publicUrlData } = supabaseClient
-    .storage
-    .from('QUIO')
-    .getPublicUrl(fileName);
+  // ── LOAD ──
+  async function loadAudios() {
+    const container = document.getElementById("audioList");
+    // skeleton
+    container.innerHTML = '<div class="skeleton"></div><div class="skeleton" style="opacity:.6"></div>';
 
-  const fileUrl = publicUrlData.publicUrl;
+    const { data, error } = await supabaseClient
+      .from('EZE').select('*').order('created_at', { ascending: false });
 
-  // Guardar en DB
-  const { error: dbError } = await supabaseClient
-    .from('EZE')
-    .insert([{ Audio: fileUrl }]);
+    if (error) {
+      container.innerHTML = `<p style="color:var(--rust);font-size:14px">Error al cargar: ${error.message}</p>`;
+      return;
+    }
 
-  if (dbError) {
-    console.error("DB ERROR:", dbError);
+    document.getElementById("countBadge").textContent =
+      data.length === 1 ? "1 pista" : `${data.length} pistas`;
+
+    if (!data.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">🎶</div>
+          <p>Aún no hay audios.<br>¡Sube el primero!</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = "";
+    data.forEach((audio, i) => {
+      const name = decodeURIComponent(audio.Audio.split("/").pop().replace(/^\d+-/, ""));
+      const date = audio.created_at
+        ? new Date(audio.created_at).toLocaleDateString("es-MX", { day:"2-digit", month:"short", year:"numeric" })
+        : "";
+
+      const div = document.createElement("div");
+      div.className = "audio-item";
+      div.style.animationDelay = `${i * 60}ms`;
+      div.innerHTML = `
+        <div class="audio-meta">
+          <div class="audio-icon">🎵</div>
+          <div>
+            <div class="audio-filename">${name}</div>
+            ${date ? `<div class="audio-date">${date}</div>` : ""}
+          </div>
+        </div>
+        <audio controls src="${audio.Audio}"></audio>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // ── HELPERS ──
+  function setLoading(on) {
+    uploadBtn.disabled = on;
+    document.getElementById("spinner").style.display = on ? "block" : "none";
+    document.getElementById("btnText").textContent = on ? "Subiendo…" : "Subir audio";
+    document.getElementById("progressWrap").style.display = on ? "block" : "none";
+  }
+
+  function fakeProgress() {
+    let w = 0;
+    const bar = document.getElementById("progressBar");
+    const iv = setInterval(() => {
+      w += Math.random() * 14;
+      if (w >= 90) { clearInterval(iv); w = 90; }
+      bar.style.width = w + "%";
+    }, 250);
+  }
+
+  let toastTimer;
+  function showToast(msg, isError = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (isError ? " error" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.className = "toast", 3200);
   }
 
   loadAudios();
-}
-
-// CARGAR AUDIOS
-async function loadAudios() {
-  const { data, error } = await supabaseClient
-    .from('EZE')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error("LOAD ERROR:", error);
-    return;
-  }
-
-  const container = document.getElementById("audioList");
-  container.innerHTML = "";
-
-  data.forEach(audio => {
-    const div = document.createElement("div");
-
-    div.innerHTML = `
-      <audio controls src="${audio.Audio}"></audio>
-      <hr>
-    `;
-
-    container.appendChild(div);
-  });
-}
-
-// INIT
-loadAudios();
-
 </script>
+</body>
+</html>
 
 </body>
 </html>
