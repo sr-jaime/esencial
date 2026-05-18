@@ -3,386 +3,380 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎵 QUIO Audio</title>
+  <title>ESENCIAL</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
 
     :root {
-      --cream:    #FDF6EC;
-      --warm:     #F5EAD7;
-      --peach:    #F4A97F;
-      --coral:    #E8744A;
-      --rust:     #C75B35;
-      --text:     #3A2A1D;
-      --muted:    #9C7E68;
-      --card-bg:  #FFFAF4;
-      --shadow:   0 8px 32px rgba(58,42,29,0.10);
-      --radius:   20px;
+      --bg: #0F0C08;
+      --beige: #F5EDE4;
+      --light-brown: #D4B89F;
+      --warm-brown: #B89A7A;
+      --accent: #E8C9A0;
+      --text: #F5EDE4;
+      --muted: #A38A6F;
+      --glow: 0 0 20px rgba(232, 201, 160, 0.6);
+      --radius: 28px;
     }
 
     body {
-      background: var(--cream);
-      background-image:
-        radial-gradient(ellipse 60% 40% at 20% 10%, #FDDCBC55 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 80% 90%, #F4A97F22 0%, transparent 60%);
+      background: var(--bg);
       font-family: 'DM Sans', sans-serif;
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 16px 80px;
+      padding: 40px 16px 100px;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(212, 184, 159, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(232, 201, 160, 0.06) 0%, transparent 50%);
+      overflow-x: hidden;
     }
 
-    /* ── HEADER ── */
+    /* ==================== HEADER ESENCIAL ANIMADO ==================== */
     header {
+      width: 100%;
+      max-width: 680px;
       text-align: center;
-      margin-bottom: 48px;
-      animation: fadeDown .6s ease both;
+      margin-bottom: 60px;
+      position: relative;
     }
+
+    .header-container {
+      position: relative;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(232,201,160,0.9), rgba(184,154,122,0.4));
+      box-shadow: 
+        0 0 60px rgba(232, 201, 160, 0.8),
+        0 0 120px rgba(232, 201, 160, 0.4),
+        inset 0 0 40px rgba(255,255,255,0.6);
+      animation: pulseOrb 8s ease-in-out infinite;
+    }
+
+    .orb1 { width: 140px; height: 140px; top: 20px; left: 50%; transform: translateX(-50%); }
+    .orb2 { width: 80px; height: 80px; top: 40px; left: 30%; animation-delay: -3s; opacity: 0.7; }
+    .orb3 { width: 60px; height: 60px; top: 70px; right: 25%; animation-delay: -5s; }
 
     .logo-badge {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: var(--coral);
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      font-size: 13px;
-      letter-spacing: .12em;
+      gap: 12px;
+      background: rgba(212, 184, 159, 0.18);
+      color: var(--light-brown);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: .2em;
       text-transform: uppercase;
-      padding: 6px 18px;
+      padding: 10px 28px;
       border-radius: 100px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(232, 201, 160, 0.35);
+      box-shadow: var(--glow);
+      position: relative;
+      z-index: 2;
     }
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-size: clamp(2.8rem, 8.5vw, 4.2rem);
       font-weight: 700;
-      color: var(--text);
-      line-height: 1.15;
+      line-height: 1.05;
+      color: var(--beige);
+      text-shadow: 
+        0 0 20px rgba(232,201,160,0.9),
+        0 0 40px rgba(232,201,160,0.5);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 2;
     }
-
-    h1 span { color: var(--coral); }
 
     .subtitle {
-      margin-top: 10px;
-      font-size: 15px;
+      font-size: 16px;
       color: var(--muted);
       font-weight: 300;
+      letter-spacing: 0.8px;
+      position: relative;
+      z-index: 2;
     }
 
-    /* ── UPLOAD CARD ── */
-    .upload-card {
-      background: var(--card-bg);
-      border: 2px dashed #E8C4A8;
-      border-radius: var(--radius);
-      padding: 40px 32px;
+    @keyframes pulseOrb {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.08); }
+    }
+
+    /* ==================== QUESTION CARDS ==================== */
+    .main-container {
       width: 100%;
-      max-width: 520px;
+      max-width: 680px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      box-shadow: var(--shadow);
-      transition: border-color .25s, box-shadow .25s;
-      animation: fadeUp .6s .1s ease both;
+      gap: 28px;
+    }
+
+    .question-card {
+      background: rgba(20, 17, 13, 0.92);
+      border: 1px solid rgba(212, 184, 159, 0.3);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
+      overflow: hidden;
     }
 
-    .upload-card.drag-over {
-      border-color: var(--coral);
-      box-shadow: 0 0 0 4px #E8744A18, var(--shadow);
+    .question-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), var(--glow);
+      transform: translateY(-6px);
     }
 
-    .upload-icon {
-      width: 72px;
-      height: 72px;
-      background: linear-gradient(135deg, #FDE8D5, #FDDCBC);
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.7;
+    }
+
+    .question-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: rgba(232, 201, 160, 0.12);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
       border-radius: 50%;
+      margin-bottom: 16px;
+      border: 1px solid rgba(232, 201, 160, 0.4);
+    }
+
+    .question-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.25rem, 4.5vw, 1.55rem);
+      line-height: 1.35;
+      color: var(--beige);
+      margin-bottom: 28px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 16px 20px;
+      border-radius: 50px;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
-      transition: transform .3s;
+      gap: 10px;
+      border: 1px solid transparent;
+      box-shadow: var(--glow);
+      position: relative;
+      overflow: hidden;
     }
 
-    .upload-card:hover .upload-icon { transform: scale(1.08) rotate(-4deg); }
-
-    .upload-label {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      color: var(--text);
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: translateX(-150%);
+      transition: transform 0.6s;
     }
 
-    .upload-hint {
-      font-size: 13px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    /* hidden native input */
-    #fileInput { display: none; }
-
-    .file-trigger {
-      background: var(--warm);
-      border: 1.5px solid #E0C9B0;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 10px 24px;
-      border-radius: 100px;
-      cursor: pointer;
-      transition: background .2s, border-color .2s;
-    }
-
-    .file-trigger:hover {
-      background: #EDE0CC;
-      border-color: var(--peach);
-    }
-
-    .file-name {
-      font-size: 13px;
-      color: var(--coral);
-      font-weight: 500;
-      min-height: 18px;
-      text-align: center;
+    .btn:hover::after {
+      transform: translateX(300%);
     }
 
     .btn-upload {
-      background: linear-gradient(135deg, var(--coral), var(--peach));
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      border: none;
-      padding: 14px 40px;
-      border-radius: 100px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px #E8744A44;
-      transition: transform .2s, box-shadow .2s, opacity .2s;
-      display: flex;
+      background: rgba(212, 184, 159, 0.15);
+      color: var(--beige);
+      border-color: var(--light-brown);
+    }
+
+    .btn-record {
+      background: rgba(184, 154, 122, 0.22);
+      color: var(--accent);
+      border-color: var(--warm-brown);
+    }
+
+    .btn-recording {
+      background: #9C2A2A;
+      color: white;
+      animation: pulseRecording 1.5s infinite;
+    }
+
+    .btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 25px rgba(232, 201, 160, 0.8);
+    }
+
+    @keyframes pulseRecording {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.75; }
+    }
+
+    .assigned-audio {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(245, 237, 228, 0.09);
+      border-radius: 18px;
+      font-size: 14px;
+      color: var(--light-brown);
+      display: none;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
+      border: 1px solid rgba(212,184,159,0.2);
     }
 
-    .btn-upload:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px #E8744A55;
-    }
-
-    .btn-upload:active { transform: translateY(0); }
-    .btn-upload:disabled { opacity: .55; cursor: default; transform: none; }
-
-    /* spinner */
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid #ffffff66;
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none;
-    }
-
-    /* progress bar */
-    .progress-bar-wrap {
-      width: 100%;
-      height: 4px;
-      background: #F0E0CE;
-      border-radius: 100px;
-      overflow: hidden;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--coral), var(--peach));
-      border-radius: 100px;
-      transition: width .4s ease;
-    }
-
-    /* toast */
-    .toast {
+    /* Toast y Share */
+    #shareBtn {
       position: fixed;
       bottom: 32px;
       left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--text);
-      color: #fff;
-      font-size: 14px;
-      padding: 12px 24px;
-      border-radius: 100px;
-      opacity: 0;
-      transition: opacity .3s, transform .3s;
-      pointer-events: none;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--accent), var(--light-brown));
+      color: #0F0C08;
+      font-weight: 600;
+      padding: 16px 52px;
+      border-radius: 50px;
+      font-size: 15.5px;
+      box-shadow: 0 10px 30px rgba(232, 201, 160, 0.5);
+      display: none;
       z-index: 100;
       white-space: nowrap;
+      transition: all 0.3s ease;
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    #shareBtn:hover {
+      transform: translateX(-50%) translateY(-4px);
+      box-shadow: 0 15px 35px rgba(232, 201, 160, 0.7);
     }
 
-    .toast.error { background: var(--rust); }
-
-    /* ── LIST SECTION ── */
-    .list-section {
-      width: 100%;
-      max-width: 520px;
-      margin-top: 40px;
-      animation: fadeUp .6s .2s ease both;
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20,17,13,0.96);
+      color: var(--beige);
+      border: 1px solid var(--accent);
+      padding: 14px 32px;
+      border-radius: 50px;
+      box-shadow: var(--glow);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 200;
     }
 
-    .list-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+    .toast.show { 
+      opacity: 1; 
+      transform: translateX(-50%) translateY(-12px); 
     }
-
-    .list-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: var(--text);
-    }
-
-    .count-badge {
-      background: var(--warm);
-      border: 1.5px solid #E0C9B0;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 100px;
-    }
-
-    /* audio item */
-    .audio-item {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      animation: fadeUp .35s ease both;
-      transition: transform .2s, box-shadow .2s;
-    }
-
-    .audio-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(58,42,29,0.14);
-    }
-
-    .audio-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .audio-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, #FDDCBC, #F4A97F);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .audio-filename {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      word-break: break-all;
-    }
-
-    .audio-date {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 1px;
-    }
-
-    /* override native audio */
-    audio {
-      width: 100%;
-      height: 40px;
-      border-radius: 100px;
-      accent-color: var(--coral);
-    }
-
-    /* empty state */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--muted);
-    }
-
-    .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
-    .empty-state p { font-size: 14px; }
-
-    /* skeleton */
-    .skeleton {
-      background: linear-gradient(90deg, #F0E0CE 25%, #FDDCBC 50%, #F0E0CE 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 12px;
-      height: 80px;
-      margin-bottom: 14px;
-    }
-
-    @keyframes shimmer { to { background-position: -200% 0; } }
-    @keyframes spin    { to { transform: rotate(360deg); } }
-    @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:none; } }
-    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px); }  to { opacity:1; transform:none; } }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo-badge">🎵 QUIO Audio</div>
-    <h1>Sube y escucha<br><span>tus audios</span></h1>
-    <p class="subtitle">Tu colección de sonidos, siempre contigo</p>
+    <div class="header-container">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+      
+      <div>
+        <div class="logo-badge">🌾 ESENCIAL</div>
+        <h1>Guarda lo que más importa</h1>
+        <p class="subtitle">Cuatro sonidos. Cuatro recuerdos. Tu esencia.</p>
+      </div>
+    </div>
   </header>
 
-  <!-- Upload card -->
-  <div class="upload-card" id="dropZone">
-    <div class="upload-icon">🎙️</div>
-    <p class="upload-label">Arrastra tu audio aquí</p>
-    <p class="upload-hint">o elige un archivo desde tu dispositivo<br>MP3, WAV, M4A, OGG…</p>
+  <div class="main-container">
 
-    <input type="file" id="fileInput" accept="audio/*">
-    <label class="file-trigger" for="fileInput">Elegir archivo</label>
-    <div class="file-name" id="fileName">Ningún archivo seleccionado</div>
-
-    <div class="progress-bar-wrap" id="progressWrap">
-      <div class="progress-bar" id="progressBar"></div>
+    <!-- Pregunta 1 -->
+    <div class="question-card" data-slot="1">
+      <div class="question-number">01</div>
+      <p class="question-text">Un sonido de tu infancia que nunca olvidaste</p>
+      <div class="action-buttons">
+        <button class="btn btn-upload" onclick="triggerUpload(1)">📁 Subir archivo</button>
+        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🎤 Grabar ahora</button>
+      </div>
+      <div class="assigned-audio" id="audio1">
+        <span>🎵</span>
+        <span id="name1"></span>
+      </div>
     </div>
 
-    <button class="btn-upload" id="uploadBtn" onclick="uploadAudio()" disabled>
-      <span class="spinner" id="spinner"></span>
-      <span id="btnText">Subir audio</span>
-    </button>
-  </div>
-
-  <!-- List -->
-  <div class="list-section">
-    <div class="list-header">
-      <span class="list-title">Tu colección</span>
-      <span class="count-badge" id="countBadge">— pistas</span>
+    <!-- Pregunta 2 -->
+    <div class="question-card" data-slot="2">
+      <div class="question-number">02</div>
+      <p class="question-text">La voz de alguien que marcó tu vida</p>
+      <div class="action-buttons">
+        <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
+        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🎤 Grabar ahora</button>
+      </div>
+      <div class="assigned-audio" id="audio2">
+        <span>🎵</span>
+        <span id="name2"></span>
+      </div>
     </div>
-    <div id="audioList"></div>
+
+    <!-- Pregunta 3 -->
+    <div class="question-card" data-slot="3">
+      <div class="question-number">03</div>
+      <p class="question-text">Un momento de paz o tranquilidad</p>
+      <div class="action-buttons">
+        <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
+        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🎤 Grabar ahora</button>
+      </div>
+      <div class="assigned-audio" id="audio3">
+        <span>🎵</span>
+        <span id="name3"></span>
+      </div>
+    </div>
+
+    <!-- Pregunta 4 -->
+    <div class="question-card" data-slot="4">
+      <div class="question-number">04</div>
+      <p class="question-text">El sonido que te define hoy</p>
+      <div class="action-buttons">
+        <button class="btn btn-upload" onclick="triggerUpload(4)">📁 Subir archivo</button>
+        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🎤 Grabar ahora</button>
+      </div>
+      <div class="assigned-audio" id="audio4">
+        <span>🎵</span>
+        <span id="name4"></span>
+      </div>
+    </div>
+
   </div>
 
+  <button id="shareBtn" onclick="shareCollection()">Compartir mi Esencial</button>
   <div class="toast" id="toast"></div>
 
 <script>
@@ -390,160 +384,145 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── FILE SELECTION ──
-  const fileInput   = document.getElementById("fileInput");
-  const fileNameEl  = document.getElementById("fileName");
-  const uploadBtn   = document.getElementById("uploadBtn");
-  const dropZone    = document.getElementById("dropZone");
+  let selectedFiles = {};
+  let audioCount = 0;
+  let mediaRecorder;
+  let audioChunks = [];
+  let currentSlot = null;
+  let isRecording = false;
+  let stream = null;
 
-  fileInput.addEventListener("change", () => {
-    const f = fileInput.files[0];
-    if (f) {
-      fileNameEl.textContent = f.name;
-      uploadBtn.disabled = false;
-    }
-  });
-
-  // ── DRAG & DROP ──
-  dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
-  dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
-  dropZone.addEventListener("drop", e => {
-    e.preventDefault();
-    dropZone.classList.remove("drag-over");
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith("audio/")) {
-      // inject into input
-      const dt = new DataTransfer();
-      dt.items.add(f);
-      fileInput.files = dt.files;
-      fileNameEl.textContent = f.name;
-      uploadBtn.disabled = false;
-    }
-  });
-
-  // ── UPLOAD ──
-  async function uploadAudio() {
-    const file = fileInput.files[0];
-    if (!file) return showToast("Selecciona un archivo primero 🎵", true);
-
-    setLoading(true);
-    fakeProgress();
-
-    const fileName = Date.now() + "-" + file.name;
-
-    const { data, error } = await supabaseClient
-      .storage.from('QUIO').upload(fileName, file);
-
-    if (error) {
-      setLoading(false);
-      return showToast(error.message, true);
-    }
-
-    const { data: publicUrlData } = supabaseClient
-      .storage.from('QUIO').getPublicUrl(fileName);
-
-    const fileUrl = publicUrlData.publicUrl;
-
-    const { error: dbError } = await supabaseClient
-      .from('EZE').insert([{ Audio: fileUrl }]);
-
-    setLoading(false);
-    document.getElementById("progressBar").style.width = "100%";
-    setTimeout(() => {
-      document.getElementById("progressWrap").style.display = "none";
-      document.getElementById("progressBar").style.width = "0%";
-    }, 600);
-
-    if (dbError) return showToast("Error al guardar en base de datos", true);
-
-    fileNameEl.textContent = "Ningún archivo seleccionado";
-    fileInput.value = "";
-    uploadBtn.disabled = true;
-    showToast("¡Audio subido con éxito! 🎉");
-    loadAudios();
+  // Trigger upload
+  function triggerUpload(slot) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'audio/*';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (file) assignAudio(slot, file);
+    };
+    input.click();
   }
 
-  // ── LOAD ──
-  async function loadAudios() {
-    const container = document.getElementById("audioList");
-    // skeleton
-    container.innerHTML = '<div class="skeleton"></div><div class="skeleton" style="opacity:.6"></div>';
+  function assignAudio(slot, file) {
+    if (audioCount >= 4 && !selectedFiles[slot]) {
+      showToast("Solo puedes tener 4 audios", true);
+      return;
+    }
+    selectedFiles[slot] = file;
+    if (!document.getElementById(`audio${slot}`).style.display || document.getElementById(`audio${slot}`).style.display === 'none') {
+      audioCount++;
+    }
 
-    const { data, error } = await supabaseClient
-      .from('EZE').select('*').order('created_at', { ascending: false });
+    const audioDiv = document.getElementById(`audio${slot}`);
+    audioDiv.style.display = 'flex';
+    document.getElementById(`name${slot}`).textContent = file.name.length > 30 ? file.name.substring(0,27)+'...' : file.name;
 
-    if (error) {
-      container.innerHTML = `<p style="color:var(--rust);font-size:14px">Error al cargar: ${error.message}</p>`;
+    checkShareButton();
+    showToast(`Audio asignado al recuerdo ${slot}`);
+    uploadAudio(file, slot);
+  }
+
+  async function uploadAudio(file, slot) {
+    try {
+      const fileName = Date.now() + "-" + file.name;
+      const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
+      if (error) throw error;
+
+      const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
+      await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
+    } catch (e) {
+      console.error(e);
+      showToast("Error al subir el archivo", true);
+    }
+  }
+
+  function checkShareButton() {
+    document.getElementById('shareBtn').style.display = audioCount === 4 ? 'block' : 'none';
+  }
+
+  function shareCollection() {
+    showToast("Enlace de compartir generado (simulado)");
+  }
+
+  // ==================== GRABACIÓN DE AUDIO ====================
+  async function toggleRecording(slot) {
+    const btn = document.getElementById(`recordBtn${slot}`);
+
+    if (isRecording && currentSlot === slot) {
+      stopRecording();
       return;
     }
 
-    document.getElementById("countBadge").textContent =
-      data.length === 1 ? "1 pista" : `${data.length} pistas`;
-
-    if (!data.length) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="emoji">🎶</div>
-          <p>Aún no hay audios.<br>¡Sube el primero!</p>
-        </div>`;
+    if (isRecording) {
+      showToast("Ya estás grabando en otro slot", true);
       return;
     }
 
-    container.innerHTML = "";
-    data.forEach((audio, i) => {
-      const name = decodeURIComponent(audio.Audio.split("/").pop().replace(/^\d+-/, ""));
-      const date = audio.created_at
-        ? new Date(audio.created_at).toLocaleDateString("es-MX", { day:"2-digit", month:"short", year:"numeric" })
-        : "";
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
 
-      const div = document.createElement("div");
-      div.className = "audio-item";
-      div.style.animationDelay = `${i * 60}ms`;
-      div.innerHTML = `
-        <div class="audio-meta">
-          <div class="audio-icon">🎵</div>
-          <div>
-            <div class="audio-filename">${name}</div>
-            ${date ? `<div class="audio-date">${date}</div>` : ""}
-          </div>
-        </div>
-        <audio controls src="${audio.Audio}"></audio>
-      `;
-      container.appendChild(div);
-    });
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const file = new File([audioBlob], `grabacion_${slot}_${Date.now()}.webm`, { type: 'audio/webm' });
+        assignAudio(slot, file);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      isRecording = true;
+      currentSlot = slot;
+
+      // UI
+      btn.classList.add('btn-recording');
+      btn.innerHTML = `⏹️ Detener grabación`;
+      showToast("Grabando... (máximo recomendado 60s)");
+
+    } catch (err) {
+      console.error(err);
+      showToast("No se pudo acceder al micrófono. Revisa los permisos.", true);
+    }
   }
 
-  // ── HELPERS ──
-  function setLoading(on) {
-    uploadBtn.disabled = on;
-    document.getElementById("spinner").style.display = on ? "block" : "none";
-    document.getElementById("btnText").textContent = on ? "Subiendo…" : "Subir audio";
-    document.getElementById("progressWrap").style.display = on ? "block" : "none";
+  function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    }
+    isRecording = false;
+    currentSlot = null;
+
+    // Reset all record buttons
+    for (let i = 1; i <= 4; i++) {
+      const btn = document.getElementById(`recordBtn${i}`);
+      if (btn) {
+        btn.classList.remove('btn-recording');
+        btn.innerHTML = `🎤 Grabar ahora`;
+      }
+    }
   }
 
-  function fakeProgress() {
-    let w = 0;
-    const bar = document.getElementById("progressBar");
-    const iv = setInterval(() => {
-      w += Math.random() * 14;
-      if (w >= 90) { clearInterval(iv); w = 90; }
-      bar.style.width = w + "%";
-    }, 250);
-  }
-
-  let toastTimer;
   function showToast(msg, isError = false) {
     const t = document.getElementById("toast");
     t.textContent = msg;
-    t.className = "toast show" + (isError ? " error" : "");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.className = "toast", 3200);
+    t.style.borderColor = isError ? '#C75B35' : 'var(--accent)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3400);
+  }
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    if (stream) stream.getTracks().forEach(track => track.stop());
+  });
+
+  // Load existing audios (placeholder)
+  async function loadAudios() {
+    console.log("Audios cargados desde Supabase");
   }
 
   loadAudios();
 </script>
-</body>
-</html>
-
 </body>
 </html>
