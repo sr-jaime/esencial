@@ -501,11 +501,11 @@
   <div class="main-container">
 
     <div class="question-card" data-slot="1">
-      <div class="question-number">01</div>
+      <div class="question-number">1</div>
       <p class="question-text">Un sonido de tu infancia que nunca olvidaste</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(1)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🎤 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player1">
         <div class="player-controls">
@@ -523,11 +523,11 @@
     </div>
 
     <div class="question-card" data-slot="2">
-      <div class="question-number">02</div>
+      <div class="question-number">2</div>
       <p class="question-text">La voz de alguien que marcó tu vida</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🎤 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player2">
         <div class="player-controls">
@@ -545,11 +545,11 @@
     </div>
 
     <div class="question-card" data-slot="3">
-      <div class="question-number">03</div>
+      <div class="question-number">3</div>
       <p class="question-text">Un momento de paz o tranquilidad</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🎤 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player3">
         <div class="player-controls">
@@ -567,11 +567,11 @@
     </div>
 
     <div class="question-card" data-slot="4">
-      <div class="question-number">04</div>
+      <div class="question-number">4</div>
       <p class="question-text">El sonido que te define hoy</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(4)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🎤 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player4">
         <div class="player-controls">
@@ -771,7 +771,7 @@
       isRecording = true;
       currentSlot = slot;
       btn.classList.add('btn-recording');
-      btn.innerHTML = `⏹️ Detener`;
+      btn.innerHTML = `🟧 Detener`;
     } catch (err) {
       showToast("Error al acceder al micrófono", true);
     }
@@ -783,7 +783,7 @@
     currentSlot = null;
     document.querySelectorAll('.btn-record').forEach(b => {
       b.classList.remove('btn-recording');
-      b.innerHTML = `🎤 Grabar ahora`;
+      b.innerHTML = `🔴 Grabar audio`;
     });
   }
 
