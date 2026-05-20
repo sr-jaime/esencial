@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESENCIAL</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>ESENCIAL - Inicio</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,7 +13,6 @@
       --beige: #F5EDE4;
       --accent: #E8C9A0;
       --glow: 0 0 20px rgba(232, 201, 160, 0.6);
-      --radius: 28px;
     }
 
     body {
@@ -25,24 +23,34 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 100px;
+      justify-content: center;
+      padding: 20px;
       background-image: 
         radial-gradient(circle at 20% 30%, rgba(212, 184, 159, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(232, 201, 160, 0.06) 0%, transparent 50%);
+      overflow-x: hidden;
     }
 
-    /* ==================== HEADER SIMPLIFICADO ==================== */
-    header {
+    .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    /* Header */
+    header {
       text-align: center;
-      margin-bottom: 60px;
       position: relative;
     }
 
-    .header-container {
+    .orb-container {
       position: relative;
-      height: 160px;
+      height: 200px;
+      width: 200px;
+      margin: 0 auto 40px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -56,59 +64,40 @@
       animation: pulseOrb 8s ease-in-out infinite;
     }
 
-    .orb1 { width: 160px; height: 160px; top: 0; left: 50%; transform: translateX(-50%); }
-    .orb2 { width: 70px; height: 70px; top: 35px; left: 25%; animation-delay: -3s; }
-    .orb3 { width: 55px; height: 55px; top: 65px; right: 22%; animation-delay: -5s; }
+    .orb1 { width: 200px; height: 200px; }
+    .orb2 { width: 90px; height: 90px; top: 55px; left: 25%; animation-delay: -3s; }
+    .orb3 { width: 70px; height: 70px; top: 80px; right: 20%; animation-delay: -5s; }
+
+    @keyframes pulseOrb {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
 
     h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(3.2rem, 9vw, 4.8rem);
+      font-size: clamp(3.5rem, 12vw, 5.5rem);
       font-weight: 700;
       color: var(--beige);
-      text-shadow: 0 0 30px rgba(232,201,160,0.95), 0 0 60px rgba(232,201,160,0.5);
-      position: relative;
-      z-index: 2;
+      text-shadow: 0 0 40px rgba(232,201,160,0.95), 0 0 80px rgba(232,201,160,0.5);
       letter-spacing: -0.02em;
       animation: floatTitle 6s ease-in-out infinite;
+      margin-bottom: 20px;
     }
 
     @keyframes floatTitle {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-12px); }
     }
 
-    @keyframes pulseOrb {
-      0%, 100% { transform: translateX(-50%) scale(1); }
-      50% { transform: translateX(-50%) scale(1.12); }
+    .subtitle {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      color: rgba(245, 237, 228, 0.8);
+      font-weight: 300;
+      letter-spacing: 1px;
+      animation: fadeInUp 1s ease-out 0.3s backwards;
     }
 
-    /* ==================== CARDS CON COLORES ==================== */
-    .main-container {
-      width: 100%;
-      max-width: 680px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    .question-card {
-      background: rgba(20, 17, 13, 0.92);
-      border: 2px solid;
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      animation: slideIn 0.6s ease-out backwards;
-    }
-
-    .question-card:nth-child(1) { animation-delay: 0.1s; }
-    .question-card:nth-child(2) { animation-delay: 0.2s; }
-    .question-card:nth-child(3) { animation-delay: 0.3s; }
-    .question-card:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes slideIn {
+    @keyframes fadeInUp {
       from {
         opacity: 0;
         transform: translateY(20px);
@@ -119,685 +108,175 @@
       }
     }
 
-    /* Colores por módulo */
-    .question-card[data-slot="1"] { border-color: #4A90E2; } /* Azul */
-    .question-card[data-slot="2"] { border-color: #E74C3C; } /* Rojo */
-    .question-card[data-slot="3"] { border-color: #F1C40F; } /* Amarillo */
-    .question-card[data-slot="4"] { border-color: #27AE60; } /* Verde */
-
-    .question-card.has-audio {
-      background: rgba(30, 25, 20, 0.95);
-      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
-      border-color: var(--accent);
-      animation: glow 2s ease-in-out infinite;
-    }
-
-    @keyframes glow {
-      0%, 100% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
-      }
-      50% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 201, 160, 0.3);
-      }
-    }
-
-    .question-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), var(--glow);
-    }
-
-    .question-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px; height: 32px;
-      background: rgba(255,255,255,0.08);
-      color: var(--beige);
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 50%;
-      margin-bottom: 16px;
-      border: 1px solid currentColor;
-      opacity: 0.9;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-
-    .question-text {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.25rem, 4.5vw, 1.55rem);
-      line-height: 1.35;
-      color: var(--beige);
-      margin-bottom: 28px;
-    }
-
-    .action-buttons {
+    /* Buttons Section */
+    .buttons-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 28px;
+      width: 100%;
+      max-width: 600px;
     }
 
-    .btn {
-      padding: 16px 20px;
-      border-radius: 50px;
-      font-weight: 500;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid transparent;
-      box-shadow: var(--glow);
+    .btn-card {
       position: relative;
       overflow: hidden;
-      color: var(--beige);
+      border-radius: 28px;
+      padding: 48px 32px;
+      text-decoration: none;
+      cursor: pointer;
+      border: 2px solid;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      animation: slideIn 0.6s ease-out backwards;
     }
 
-    .btn::after {
+    .btn-card:nth-child(1) { animation-delay: 0.3s; border-color: #4A90E2; }
+    .btn-card:nth-child(2) { animation-delay: 0.5s; border-color: #27AE60; }
+
+    .btn-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-      transform: translateX(-150%);
-      transition: 0.6s;
-    }
-    .btn:hover::after { transform: translateX(300%); }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn-upload { 
-      background: linear-gradient(135deg, rgba(212,184,159,0.15), rgba(232,201,160,0.1));
-      color: var(--beige);
-    }
-
-    .btn-upload:hover {
-      background: linear-gradient(135deg, rgba(212,184,159,0.25), rgba(232,201,160,0.2));
-      transform: translateY(-2px);
-      box-shadow: var(--glow), 0 8px 20px rgba(232, 201, 160, 0.3);
-    }
-
-    .btn-record { 
-      background: linear-gradient(135deg, rgba(184,154,122,0.22), rgba(212,184,159,0.15));
-      color: var(--accent);
-    }
-
-    .btn-record:hover {
-      background: linear-gradient(135deg, rgba(184,154,122,0.35), rgba(212,184,159,0.25));
-      transform: translateY(-2px);
-      box-shadow: var(--glow), 0 8px 20px rgba(232, 201, 160, 0.3);
-    }
-
-    .btn-recording {
-      background: linear-gradient(135deg, #9C2A2A, #C75B35) !important;
-      color: #FFE8E8 !important;
-      animation: pulseRecording 1.4s infinite;
-    }
-
-    @keyframes pulseRecording { 
-      0%,100% { 
-        opacity: 1;
-        box-shadow: 0 0 20px rgba(156, 42, 42, 0.8);
-      } 
-      50% { 
-        opacity: 0.7;
-        box-shadow: 0 0 30px rgba(156, 42, 42, 0.5);
-      } 
-    }
-
-    /* Audio Player Styles */
-    .audio-player {
-      margin-top: 22px;
-      padding: 18px 20px;
-      background: linear-gradient(135deg, rgba(232,201,160,0.12), rgba(184,154,122,0.08));
-      border-radius: 16px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      border: 1.5px solid rgba(232,201,160,0.3);
-      animation: slideUp 0.4s ease-out;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .player-controls {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex: 1;
-    }
-
-    .play-btn {
-      background: linear-gradient(135deg, var(--accent), #D4B89F);
-      color: #0F0C08;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(232, 201, 160, 0.4);
-    }
-
-    .play-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 6px 20px rgba(232, 201, 160, 0.6);
-    }
-
-    .play-btn:active {
-      transform: scale(0.95);
-    }
-
-    .progress-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .progress-bar {
-      flex: 1;
-      height: 4px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 2px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), #D4B89F);
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 10px rgba(232, 201, 160, 0.5);
-    }
-
-    .time-display {
-      font-size: 12px;
-      color: rgba(245, 237, 228, 0.7);
-      min-width: 50px;
-      text-align: right;
-      font-weight: 500;
-    }
-
-    .audio-name {
-      font-size: 14px;
-      color: var(--beige);
-      font-weight: 500;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .assigned-audio {
-      margin-top: 22px;
-      padding: 16px 18px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 16px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .audio-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .remove-btn {
-      background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(199,91,53,0.15));
-      color: #FFB3B3;
-      border: 1px solid rgba(255,107,107,0.3);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .remove-btn:hover {
-      background: linear-gradient(135deg, rgba(255,107,107,0.4), rgba(199,91,53,0.3));
-      transform: scale(1.15) rotate(90deg);
-      box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
-    }
-
-    /* Share Button */
-    #shareBtn {
-      position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, var(--accent), #D4B89F);
-      color: #0F0C08;
-      font-weight: 600;
-      padding: 16px 56px;
-      border-radius: 50px;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(232, 201, 160, 0.5);
-      display: none;
-      z-index: 100;
-      white-space: nowrap;
-      transition: all 0.3s ease;
-      letter-spacing: 0.5px;
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-      }
-    }
-
-    #shareBtn:hover {
-      transform: translateX(-50%) translateY(-5px) scale(1.05);
-      box-shadow: 0 15px 40px rgba(232, 201, 160, 0.7);
-    }
-
-    #shareBtn:active {
-      transform: translateX(-50%) translateY(-2px) scale(0.98);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 120px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(20,17,13,0.96);
-      color: var(--beige);
-      border: 1px solid var(--accent);
-      padding: 14px 32px;
-      border-radius: 50px;
-      box-shadow: var(--glow);
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent);
       opacity: 0;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 200;
+      transition: opacity 0.4s;
     }
 
-    .toast.show { 
-      opacity: 1; 
-      transform: translateX(-50%) translateY(-12px);
-      animation: toastSlide 0.4s ease-out;
+    .btn-card:hover::before {
+      opacity: 1;
     }
 
-    @keyframes toastSlide {
+    @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateX(30px);
       }
       to {
         opacity: 1;
-        transform: translateX(-50%) translateY(-12px);
+        transform: translateX(0);
       }
     }
 
-    .toast.error {
-      border-color: #C75B35;
-      background: rgba(199, 91, 53, 0.15);
+    .btn-card:nth-child(2) {
+      animation-name: slideInReverse;
     }
 
+    @keyframes slideInReverse {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .btn-icon {
+      font-size: 48px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .btn-card:nth-child(2) .btn-icon {
+      animation-delay: -1.5s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .btn-text {
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      font-weight: 600;
+      color: var(--beige);
+      letter-spacing: 1px;
+    }
+
+    .btn-description {
+      font-size: 14px;
+      color: rgba(245, 237, 228, 0.7);
+      font-weight: 300;
+    }
+
+    .btn-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), var(--glow);
+      border-color: var(--accent);
+    }
+
+    .btn-card:active {
+      transform: translateY(-4px);
+    }
+
+    /* Info Section */
+    .info-section {
+      text-align: center;
+      color: rgba(245, 237, 228, 0.6);
+      font-size: 14px;
+      line-height: 1.8;
+      max-width: 500px;
+      animation: fadeInUp 1s ease-out 0.7s backwards;
+    }
+
+    .info-section p {
+      margin-bottom: 12px;
+    }
+
+    /* Responsive */
     @media (max-width: 640px) {
-      .progress-container {
-        display: none;
+      .buttons-section {
+        grid-template-columns: 1fr;
+        gap: 24px;
       }
 
-      .audio-player {
-        justify-content: center;
+      .container {
+        gap: 40px;
+      }
+
+      h1 {
+        font-size: 2.8rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-container">
-      <div class="orb orb1"></div>
-      <div class="orb orb2"></div>
-      <div class="orb orb3"></div>
+  <div class="container">
+    <header>
+      <div class="orb-container">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+      </div>
       <h1>ESENCIAL</h1>
-    </div>
-  </header>
+      <p class="subtitle">Comparte los sonidos que definen tu historia</p>
+    </header>
 
-  <div class="main-container">
+    <section class="buttons-section">
+      <a href="proyecto.html" class="btn-card">
+        <span class="btn-icon">🎵</span>
+        <span class="btn-text">PROYECTO</span>
+        <span class="btn-description">Descubre qué es ESENCIAL</span>
+      </a>
 
-    <div class="question-card" data-slot="1">
-      <div class="question-number">1</div>
-      <p class="question-text">Un sonido de tu infancia que nunca olvidaste</p>
-      <div class="action-buttons">
-        <button class="btn btn-upload" onclick="triggerUpload(1)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🔴 Grabar audio</button>
-      </div>
-      <div class="audio-player" id="player1">
-        <div class="player-controls">
-          <button class="play-btn" id="playBtn1" onclick="togglePlayPause(1)">▶</button>
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar1" onclick="seek(event, 1)">
-              <div class="progress-fill" id="progressFill1"></div>
-            </div>
-            <span class="time-display" id="timeDisplay1">0:00</span>
-          </div>
-        </div>
-        <button class="remove-btn" onclick="removeAudio(1)">×</button>
-      </div>
-      <audio id="audio1"></audio>
-    </div>
+      <a href="compartir.html" class="btn-card">
+        <span class="btn-icon">🎙️</span>
+        <span class="btn-text">COMPARTIR</span>
+        <span class="btn-description">Sube tu historia sonora</span>
+      </a>
+    </section>
 
-    <div class="question-card" data-slot="2">
-      <div class="question-number">2</div>
-      <p class="question-text">La voz de alguien que marcó tu vida</p>
-      <div class="action-buttons">
-        <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🔴 Grabar audio</button>
-      </div>
-      <div class="audio-player" id="player2">
-        <div class="player-controls">
-          <button class="play-btn" id="playBtn2" onclick="togglePlayPause(2)">▶</button>
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar2" onclick="seek(event, 2)">
-              <div class="progress-fill" id="progressFill2"></div>
-            </div>
-            <span class="time-display" id="timeDisplay2">0:00</span>
-          </div>
-        </div>
-        <button class="remove-btn" onclick="removeAudio(2)">×</button>
-      </div>
-      <audio id="audio2"></audio>
-    </div>
-
-    <div class="question-card" data-slot="3">
-      <div class="question-number">3</div>
-      <p class="question-text">Un momento de paz o tranquilidad</p>
-      <div class="action-buttons">
-        <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🔴 Grabar audio</button>
-      </div>
-      <div class="audio-player" id="player3">
-        <div class="player-controls">
-          <button class="play-btn" id="playBtn3" onclick="togglePlayPause(3)">▶</button>
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar3" onclick="seek(event, 3)">
-              <div class="progress-fill" id="progressFill3"></div>
-            </div>
-            <span class="time-display" id="timeDisplay3">0:00</span>
-          </div>
-        </div>
-        <button class="remove-btn" onclick="removeAudio(3)">×</button>
-      </div>
-      <audio id="audio3"></audio>
-    </div>
-
-    <div class="question-card" data-slot="4">
-      <div class="question-number">4</div>
-      <p class="question-text">El sonido que te define hoy</p>
-      <div class="action-buttons">
-        <button class="btn btn-upload" onclick="triggerUpload(4)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🔴 Grabar audio</button>
-      </div>
-      <div class="audio-player" id="player4">
-        <div class="player-controls">
-          <button class="play-btn" id="playBtn4" onclick="togglePlayPause(4)">▶</button>
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar4" onclick="seek(event, 4)">
-              <div class="progress-fill" id="progressFill4"></div>
-            </div>
-            <span class="time-display" id="timeDisplay4">0:00</span>
-          </div>
-        </div>
-        <button class="remove-btn" onclick="removeAudio(4)">×</button>
-      </div>
-      <audio id="audio4"></audio>
-    </div>
-
+    <section class="info-section">
+      <p>Un proyecto colaborativo que celebra la belleza de los sonidos en nuestras vidas.</p>
+      <p style="font-size: 12px; margin-top: 20px;">© 2026 ESENCIAL | Todos los derechos reservados</p>
+    </section>
   </div>
 
-  <button id="shareBtn" onclick="shareCollection()">COMPARTIR</button>
-  <div class="toast" id="toast"></div>
-
-<script>
-  // Supabase configuration
-  const SUPABASE_URL = "https://jxdtrqowhjayvybjrghb.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  let selectedFiles = {};
-  let audioCount = 0;
-  let mediaRecorder, audioChunks = [], currentSlot = null, isRecording = false, stream = null;
-  let currentlyPlaying = null;
-  let audioElements = {};
-
-  // Initialize audio elements
-  for (let i = 1; i <= 4; i++) {
-    audioElements[i] = document.getElementById(`audio${i}`);
-    audioElements[i].addEventListener('timeupdate', () => updateProgress(i));
-    audioElements[i].addEventListener('loadedmetadata', () => updateTimeDisplay(i));
-    audioElements[i].addEventListener('ended', () => handleAudioEnded(i));
-  }
-
-  function triggerUpload(slot) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'audio/*';
-    input.onchange = () => {
-      if (input.files[0]) assignAudio(slot, input.files[0]);
-    };
-    input.click();
-  }
-
-  function assignAudio(slot, file) {
-    if (audioCount >= 4 && !selectedFiles[slot]) {
-      showToast("Máximo 4 audios permitidos", true);
-      return;
-    }
-
-    selectedFiles[slot] = file;
-    if (!document.getElementById(`player${slot}`).style.display.includes('flex')) audioCount++;
-
-    const container = document.getElementById(`player${slot}`);
-    container.style.display = 'flex';
-
-    // Create audio URL and set it
-    const audioURL = URL.createObjectURL(file);
-    audioElements[slot].src = audioURL;
-
-    document.querySelector(`.question-card[data-slot="${slot}"]`).classList.add('has-audio');
-    checkShareButton();
-    uploadAudio(file, slot);
-  }
-
-  function removeAudio(slot) {
-    if (!selectedFiles[slot]) return;
-    
-    // Stop playing if this audio is playing
-    if (currentlyPlaying === slot) {
-      audioElements[slot].pause();
-      currentlyPlaying = null;
-      document.getElementById(`playBtn${slot}`).textContent = '▶';
-    }
-
-    delete selectedFiles[slot];
-    audioCount = Math.max(0, audioCount - 1);
-    
-    const container = document.getElementById(`player${slot}`);
-    container.style.display = 'none';
-    audioElements[slot].src = '';
-    document.querySelector(`.question-card[data-slot="${slot}"]`).classList.remove('has-audio');
-    
-    checkShareButton();
-    showToast(`Audio ${slot} eliminado`);
-  }
-
-  async function uploadAudio(file, slot) { 
-    try {
-      const fileName = Date.now() + "-" + file.name;
-      const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
-      if (error) throw error;
-      const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
-      await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
-    } catch(e) {
-      console.error(e);
-    }
-  }
-
-  function togglePlayPause(slot) {
-    const audio = audioElements[slot];
-    const btn = document.getElementById(`playBtn${slot}`);
-
-    if (currentlyPlaying && currentlyPlaying !== slot) {
-      audioElements[currentlyPlaying].pause();
-      document.getElementById(`playBtn${currentlyPlaying}`).textContent = '▶';
-    }
-
-    if (audio.paused) {
-      audio.play();
-      btn.textContent = '⏸';
-      currentlyPlaying = slot;
-    } else {
-      audio.pause();
-      btn.textContent = '▶';
-      currentlyPlaying = null;
-    }
-  }
-
-  function updateProgress(slot) {
-    const audio = audioElements[slot];
-    if (audio.duration) {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      document.getElementById(`progressFill${slot}`).style.width = percent + '%';
-      updateTimeDisplay(slot);
-    }
-  }
-
-  function updateTimeDisplay(slot) {
-    const audio = audioElements[slot];
-    const current = formatTime(audio.currentTime);
-    const duration = formatTime(audio.duration || 0);
-    document.getElementById(`timeDisplay${slot}`).textContent = `${current} / ${duration}`;
-  }
-
-  function formatTime(seconds) {
-    if (isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
-
-  function seek(event, slot) {
-    const audio = audioElements[slot];
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const percent = x / rect.width;
-    audio.currentTime = percent * audio.duration;
-  }
-
-  function handleAudioEnded(slot) {
-    document.getElementById(`playBtn${slot}`).textContent = '▶';
-    currentlyPlaying = null;
-  }
-
-  function checkShareButton() {
-    document.getElementById('shareBtn').style.display = audioCount === 4 ? 'block' : 'none';
-  }
-
-  function shareCollection() {
-    showToast("Enlace de compartir generado (simulado)");
-  }
-
-  // Recording functionality
-  async function toggleRecording(slot) {
-    const btn = document.getElementById(`recordBtn${slot}`);
-    if (isRecording && currentSlot === slot) {
-      stopRecording();
-      return;
-    }
-    if (isRecording) {
-      showToast("Ya estás grabando en otro módulo", true);
-      return;
-    }
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
-
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const file = new File([blob], `grabacion_${slot}_${Date.now()}.webm`, { type: 'audio/webm' });
-        assignAudio(slot, file);
-        stream.getTracks().forEach(t => t.stop());
-      };
-
-      mediaRecorder.start();
-      isRecording = true;
-      currentSlot = slot;
-      btn.classList.add('btn-recording');
-      btn.innerHTML = `🟧 Detener`;
-    } catch (err) {
-      showToast("Error al acceder al micrófono", true);
-    }
-  }
-
-  function stopRecording() {
-    if (mediaRecorder) mediaRecorder.stop();
-    isRecording = false;
-    currentSlot = null;
-    document.querySelectorAll('.btn-record').forEach(b => {
-      b.classList.remove('btn-recording');
-      b.innerHTML = `🔴 Grabar audio`;
-    });
-  }
-
-  function showToast(msg, isError = false) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = 'toast' + (isError ? ' error' : '');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3400);
-  }
-
-  window.addEventListener('beforeunload', () => {
-    if (stream) stream.getTracks().forEach(track => track.stop());
-  });
-</script>
 </body>
 </html>
