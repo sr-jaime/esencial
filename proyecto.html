@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto ESENCIAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F0C08;
+      --beige: #F5EDE4;
+      --accent: #E8C9A0;
+      --glow: 0 0 20px rgba(232, 201, 160, 0.6);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--beige);
+      min-height: 100vh;
+      padding: 40px 20px;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(212, 184, 159, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(232, 201, 160, 0.06) 0%, transparent 50%);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out backwards;
+    }
+
+    .back-btn:hover {
+      gap: 12px;
+      text-shadow: 0 0 20px rgba(232, 201, 160, 0.6);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      color: var(--beige);
+      text-shadow: 0 0 30px rgba(232,201,160,0.95);
+      margin-bottom: 20px;
+      animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      color: rgba(245, 237, 228, 0.8);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      animation: slideDown 0.8s ease-out 0.2s backwards;
+    }
+
+    /* Content Sections */
+    .content-section {
+      margin-bottom: 80px;
+      animation: fadeInUp 0.8s ease-out backwards;
+    }
+
+    .content-section:nth-child(2) { animation-delay: 0.2s; }
+    .content-section:nth-child(3) { animation-delay: 0.4s; }
+    .content-section:nth-child(4) { animation-delay: 0.6s; }
+    .content-section:nth-child(5) { animation-delay: 0.8s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--beige);
+      margin-bottom: 30px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    .section-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .section-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(245, 237, 228, 0.9);
+    }
+
+    .section-text p {
+      margin-bottom: 16px;
+    }
+
+    .image-placeholder {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(135deg, rgba(232,201,160,0.15), rgba(184,154,122,0.08));
+      border: 2px solid rgba(232,201,160,0.3);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .image-placeholder:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 40px rgba(232, 201, 160, 0.2);
+      transform: translateY(-5px);
+    }
+
+    .image-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .image-placeholder:hover::before {
+      opacity: 1;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Features List */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 28px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(20, 17, 13, 0.8);
+      border: 1px solid rgba(232, 201, 160, 0.2);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(232,201,160,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), var(--glow);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .feature-card:nth-child(2) .feature-icon { animation-delay: -1s; }
+    .feature-card:nth-child(3) .feature-icon { animation-delay: -2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--beige);
+    }
+
+    .feature-desc {
+      font-size: 0.95rem;
+      color: rgba(245, 237, 228, 0.7);
+      line-height: 1.6;
+    }
+
+    /* CTA Button */
+    .cta-section {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(232, 201, 160, 0.2);
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), #D4B89F);
+      color: #0F0C08;
+      padding: 18px 64px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(232, 201, 160, 0.5);
+      letter-spacing: 0.5px;
+      animation: fadeInUp 0.8s ease-out 1s backwards;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(232, 201, 160, 0.7);
+    }
+
+    .cta-btn:active {
+      transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .section-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <a href="index.html" class="back-btn">← Volver</a>
+      <h1>ESENCIAL</h1>
+      <p class="tagline">Un proyecto colaborativo que celebra los sonidos de nuestras vidas</p>
+    </header>
+
+    <section class="content-section">
+      <h2 class="section-title">¿Qué es ESENCIAL?</h2>
+      <div class="section-content">
+        <div class="section-text">
+          <p><span class="highlight">ESENCIAL</span> es un proyecto participativo que invita a personas de todo el mundo a compartir los <span class="highlight">sonidos más importantes de sus vidas</span>. Cada audio es una ventana a las experiencias, emociones y momentos que nos definen.</p>
+          <p>No se trata solo de música o ruido, sino de <span class="highlight">paisajes sonoros personales</span> que cuentan historias únicas y profundas. Desde una risa importante, el sonido de la naturaleza, la voz de alguien que amamos, hasta el ruido cotidiano que nos reconforta.</p>
+        </div>
+        <div class="image-placeholder">🌍</div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Nuestras Preguntas</h2>
+      <div class="section-content">
+        <div class="image-placeholder">🎤</div>
+        <div class="section-text">
+          <p>Te invitamos a responder cuatro preguntas esenciales:</p>
+          <p><span class="highlight">① Un sonido de tu infancia</span> que nunca olvidaste</p>
+          <p><span class="highlight">② La voz de alguien</span> que marcó tu vida</p>
+          <p><span class="highlight">③ Un momento</span> de paz o tranquilidad</p>
+          <p><span class="highlight">④ El sonido que</span> te define hoy</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">¿Por Qué Participar?</h2>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🎵</div>
+          <h3 class="feature-title">Comparte tu Historia</h3>
+          <p class="feature-desc">Expresa quién eres a través de los sonidos que definen tu existencia</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌟</div>
+          <h3 class="feature-title">Conecta con Otros</h3>
+          <p class="feature-desc">Descubre cómo sonidos similares unen a personas de diferentes lugares</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💭</div>
+          <h3 class="feature-title">Reflexiona</h3>
+          <p class="feature-desc">Profundiza en los momentos y personas que realmente importan en tu vida</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">Cómo Funciona</h2>
+      <div class="section-text">
+        <p>1️⃣ Accede a la sección <span class="highlight">COMPARTIR</span> en el menú principal</p>
+        <p>2️⃣ <span class="highlight">Acepta nuestras políticas de privacidad</span> y registra tu nombre</p>
+        <p>3️⃣ <span class="highlight">Sube o graba</span> tus audios respondiendo las cuatro preguntas esenciales</p>
+        <p>4️⃣ <span class="highlight">Comparte</span> tu colección cuando hayas completado todos los audios</p>
+        <p>5️⃣ <span class="highlight">Conéctate</span> con la comunidad global de ESENCIAL</p>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <p style="margin-bottom: 30px; color: rgba(245, 237, 228, 0.8);">¿Listo para compartir tus sonidos esenciales?</p>
+      <a href="compartir.html" class="cta-btn">COMENZAR AHORA</a>
+    </section>
+  </div>
+
+</body>
+</html>
