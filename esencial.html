@@ -40,11 +40,16 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      animation: fadeInShare 0.6s ease-out;
+      animation: fadeInShare 0.6s ease-out forwards;
     }
 
     .share-success-modal.active {
       display: flex;
+      animation: fadeInShare 0.6s ease-out forwards;
+    }
+
+    .share-success-modal.closing {
+      animation: fadeOutShare 0.8s ease-in forwards;
     }
 
     @keyframes fadeInShare {
@@ -53,6 +58,15 @@
       }
       to {
         opacity: 1;
+      }
+    }
+
+    @keyframes fadeOutShare {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
       }
     }
 
@@ -316,6 +330,7 @@
       gap: 14px;
       border: 1.5px solid rgba(232,201,160,0.3);
       animation: slideUp 0.4s ease-out;
+      flex-wrap: wrap;
     }
 
     @keyframes slideUp {
@@ -334,6 +349,7 @@
       align-items: center;
       gap: 14px;
       flex: 1;
+      min-width: 0;
     }
 
     .play-btn {
@@ -351,6 +367,7 @@
       justify-content: center;
       font-weight: 600;
       box-shadow: 0 4px 15px rgba(232, 201, 160, 0.4);
+      flex-shrink: 0;
     }
 
     .play-btn:hover {
@@ -367,6 +384,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      min-width: 0;
     }
 
     .progress-bar {
@@ -377,6 +395,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      min-width: 50px;
     }
 
     .progress-fill {
@@ -394,6 +413,7 @@
       min-width: 50px;
       text-align: right;
       font-weight: 500;
+      flex-shrink: 0;
     }
 
     .remove-btn {
@@ -409,6 +429,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .remove-btn:hover {
@@ -474,6 +495,7 @@
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 200;
+      max-width: 90%;
     }
 
     .toast.show { 
@@ -511,7 +533,17 @@
       }
 
       .audio-player {
-        justify-content: center;
+        justify-content: flex-start;
+      }
+
+      .btn {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+
+      #shareBtn {
+        padding: 14px 40px;
+        font-size: 15px;
       }
     }
   </style>
@@ -555,7 +587,7 @@
         </div>
         <button class="remove-btn" onclick="removeAudio(1)">×</button>
       </div>
-      <audio id="audio1"></audio>
+      <audio id="audio1" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="2">
@@ -577,7 +609,7 @@
         </div>
         <button class="remove-btn" onclick="removeAudio(2)">×</button>
       </div>
-      <audio id="audio2"></audio>
+      <audio id="audio2" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="3">
@@ -599,7 +631,7 @@
         </div>
         <button class="remove-btn" onclick="removeAudio(3)">×</button>
       </div>
-      <audio id="audio3"></audio>
+      <audio id="audio3" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="4">
@@ -621,7 +653,7 @@
         </div>
         <button class="remove-btn" onclick="removeAudio(4)">×</button>
       </div>
-      <audio id="audio4"></audio>
+      <audio id="audio4" crossorigin="anonymous"></audio>
     </div>
 
   </div>
@@ -667,9 +699,12 @@
   function triggerUpload(slot) {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'audio/*';
+    input.accept = 'audio/*,video/mp4,video/quicktime';
     input.onchange = () => {
-      if (input.files[0]) assignAudio(slot, input.files[0]);
+      if (input.files[0]) {
+        const file = input.files[0];
+        assignAudio(slot, file);
+      }
     };
     input.click();
   }
@@ -719,28 +754,50 @@
 
   async function uploadAudio(file, slot) { 
     try {
+      if (!currentUser || !currentUser.name) {
+        showToast('Error: Usuario no identificado', true);
+        return;
+      }
+
       // Add user name to filename
       const userName = currentUser.name.replace(/\s+/g, '_');
-      const fileName = `${userName}_slot${slot}_${Date.now()}_${file.name}`;
+      const fileExtension = file.name.split('.').pop() || 'webm';
+      const fileName = `${userName}_slot${slot}_${Date.now()}.${fileExtension}`;
+      
+      showToast('Subiendo audio...', false);
       
       // Upload to Supabase storage
-      const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
-      if (error) throw error;
+      const { data: uploadData, error: uploadError } = await supabaseClient.storage
+        .from('QUIO')
+        .upload(fileName, file, { upsert: false });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        showToast('Error al subir: ' + uploadError.message, true);
+        return;
+      }
       
       // Get public URL
       const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
       
       // Insert record in database with user name
-      await supabaseClient.from('EZE').insert([{ 
+      const { data: dbData, error: dbError } = await supabaseClient.from('EZE').insert([{ 
         Audio: urlData.publicUrl, 
         slot: slot,
         userName: currentUser.name
       }]);
+
+      if (dbError) {
+        console.error('Database error:', dbError);
+        showToast('Error en base de datos: ' + dbError.message, true);
+        return;
+      }
       
+      showToast(`Audio ${slot} subido correctamente ✓`, false);
       console.log(`Audio ${slot} uploaded successfully for user: ${currentUser.name}`);
     } catch(e) {
       console.error('Upload error:', e);
-      showToast('Error al subir el audio', true);
+      showToast('Error al procesar el audio: ' + e.message, true);
     }
   }
 
@@ -748,13 +805,21 @@
     const audio = audioElements[slot];
     const btn = document.getElementById(`playBtn${slot}`);
 
+    if (!audio.src) {
+      showToast('No hay audio para reproducir', true);
+      return;
+    }
+
     if (currentlyPlaying && currentlyPlaying !== slot) {
       audioElements[currentlyPlaying].pause();
       document.getElementById(`playBtn${currentlyPlaying}`).textContent = '▶';
     }
 
     if (audio.paused) {
-      audio.play();
+      audio.play().catch(err => {
+        console.error('Error playing audio:', err);
+        showToast('Error al reproducir', true);
+      });
       btn.textContent = '⏸';
       currentlyPlaying = slot;
     } else {
@@ -789,6 +854,8 @@
 
   function seek(event, slot) {
     const audio = audioElements[slot];
+    if (!audio.duration) return;
+    
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const percent = x / rect.width;
@@ -806,29 +873,57 @@
 
   function shareCollection() {
     const modal = document.getElementById('shareSuccessModal');
+    modal.classList.remove('closing');
     modal.classList.add('active');
     
     setTimeout(() => {
-      modal.classList.remove('active');
-    }, 2000);
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.classList.remove('active');
+        modal.classList.remove('closing');
+      }, 800);
+    }, 1200);
   }
 
   // Recording functionality with 6 second limit
   async function toggleRecording(slot) {
     const btn = document.getElementById(`recordBtn${slot}`);
+    
     if (isRecording && currentSlot === slot) {
       stopRecording();
       return;
     }
+    
     if (isRecording) {
       showToast("Ya estás grabando en otro módulo", true);
       return;
     }
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Request microphone access
+      stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      }).catch(err => {
+        console.error('Microphone error:', err);
+        throw new Error('No se pudo acceder al micrófono. Asegúrate de habilitar los permisos.');
+      });
+
       audioChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
+      
+      // Try different codecs for better compatibility
+      const options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'audio/mp4';
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = '';
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
       
       recordingStartTime = Date.now();
       recordingDuration = 0;
@@ -837,9 +932,10 @@
       recordingInterval = setInterval(() => {
         recordingDuration = Date.now() - recordingStartTime;
         const seconds = Math.floor(recordingDuration / 1000);
+        const remaining = Math.max(0, 6 - seconds);
         
         // Show timer
-        btn.innerHTML = `🔴 Grabando... ${seconds}s <span class="recording-timer">${6 - seconds}s</span>`;
+        btn.innerHTML = `🔴 Grabando... ${seconds}s <span class="recording-timer">${remaining}s</span>`;
         
         // Stop recording if max time reached
         if (recordingDuration >= MAX_RECORDING_TIME) {
@@ -848,28 +944,56 @@
         }
       }, 100);
 
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          audioChunks.push(e.data);
+        }
+      };
+
       mediaRecorder.onstop = () => {
         clearInterval(recordingInterval);
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const userName = currentUser.name.replace(/\s+/g, '_');
-        const file = new File([blob], `${userName}_grabacion_${slot}_${Date.now()}.webm`, { type: 'audio/webm' });
-        assignAudio(slot, file);
-        stream.getTracks().forEach(t => t.stop());
+        
+        if (audioChunks.length > 0) {
+          const mimeType = mediaRecorder.mimeType || 'audio/webm';
+          const blob = new Blob(audioChunks, { type: mimeType });
+          const fileExtension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+          const userName = currentUser.name.replace(/\s+/g, '_');
+          const file = new File([blob], `${userName}_grabacion_${slot}_${Date.now()}.${fileExtension}`, { type: mimeType });
+          assignAudio(slot, file);
+        }
+        
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
+        }
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error('Recording error:', event.error);
+        stopRecording();
+        showToast('Error durante la grabación: ' + event.error, true);
       };
 
       mediaRecorder.start();
       isRecording = true;
       currentSlot = slot;
       btn.classList.add('btn-recording');
+      
     } catch (err) {
-      showToast("Error al acceder al micrófono", true);
+      console.error('Error:', err);
+      showToast(err.message || "Error al acceder al micrófono", true);
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+      }
     }
   }
 
   function stopRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
+      try {
+        mediaRecorder.stop();
+      } catch(e) {
+        console.error('Error stopping recorder:', e);
+      }
     }
     
     clearInterval(recordingInterval);
@@ -891,8 +1015,21 @@
   }
 
   window.addEventListener('beforeunload', () => {
-    if (stream) stream.getTracks().forEach(track => track.stop());
+    if (stream) {
+      stream.getTracks().forEach(track => {
+        try {
+          track.stop();
+        } catch(e) {}
+      });
+    }
     clearInterval(recordingInterval);
+  });
+
+  // Handle page visibility
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isRecording) {
+      stopRecording();
+    }
   });
 </script>
 </body>
