@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESENCIAL - Comparte tus Sonidos</title>
+  <title>ESENCIAL</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -53,21 +53,13 @@
     }
 
     @keyframes fadeInShare {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes fadeOutShare {
-      from {
-        opacity: 1;
-      }
-      to {
-        opacity: 0;
-      }
+      from { opacity: 1; }
+      to { opacity: 0; }
     }
 
     .share-success-content {
@@ -77,14 +69,8 @@
     }
 
     @keyframes scaleInShare {
-      from {
-        opacity: 0;
-        transform: scale(0.5);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .share-success-content h2 {
@@ -140,6 +126,12 @@
       position: relative;
       z-index: 2;
       letter-spacing: -0.02em;
+      animation: floatTitle 6s ease-in-out infinite;
+    }
+
+    @keyframes floatTitle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
     }
 
     @keyframes pulseOrb {
@@ -174,14 +166,8 @@
     .question-card:nth-child(4) { animation-delay: 0.4s; }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Colores por módulo */
@@ -198,12 +184,8 @@
     }
 
     @keyframes glow {
-      0%, 100% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
-      }
-      50% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 201, 160, 0.3);
-      }
+      0%, 100% { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5); }
+      50% { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 201, 160, 0.3); }
     }
 
     .question-card:hover {
@@ -275,9 +257,7 @@
     }
     .btn:hover::after { transform: translateX(300%); }
 
-    .btn:active {
-      transform: scale(0.97);
-    }
+    .btn:active { transform: scale(0.97); }
 
     .btn-upload { 
       background: linear-gradient(135deg, rgba(212,184,159,0.15), rgba(232,201,160,0.1));
@@ -308,14 +288,8 @@
     }
 
     @keyframes pulseRecording { 
-      0%,100% { 
-        opacity: 1;
-        box-shadow: 0 0 20px rgba(156, 42, 42, 0.8);
-      } 
-      50% { 
-        opacity: 0.7;
-        box-shadow: 0 0 30px rgba(156, 42, 42, 0.5);
-      } 
+      0%,100% { opacity: 1; box-shadow: 0 0 20px rgba(156, 42, 42, 0.8); } 
+      50% { opacity: 0.7; box-shadow: 0 0 30px rgba(156, 42, 42, 0.5); } 
     }
 
     /* Audio Player Styles */
@@ -334,14 +308,8 @@
     }
 
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .player-controls {
@@ -375,9 +343,7 @@
       box-shadow: 0 6px 20px rgba(232, 201, 160, 0.6);
     }
 
-    .play-btn:active {
-      transform: scale(0.95);
-    }
+    .play-btn:active { transform: scale(0.95); }
 
     .progress-container {
       flex: 1;
@@ -462,14 +428,8 @@
     }
 
     @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-      }
+      from { opacity: 0; transform: translateX(-50%) scale(0.8); }
+      to { opacity: 1; transform: translateX(-50%) scale(1); }
     }
 
     #shareBtn:hover {
@@ -505,14 +465,8 @@
     }
 
     @keyframes toastSlide {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-12px);
-      }
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(-12px); }
     }
 
     .toast.error {
@@ -675,18 +629,7 @@
   let recordingStartTime = 0;
   let recordingDuration = 0;
   let recordingInterval = null;
-  let currentUser = null;
-  const MAX_RECORDING_TIME = 6000; // 6 seconds in milliseconds
-
-  // Load user data on page load
-  window.addEventListener('load', () => {
-    const userDataString = localStorage.getItem('esencialUser');
-    if (!userDataString) {
-      window.location.href = 'compartir.html';
-      return;
-    }
-    currentUser = JSON.parse(userDataString);
-  });
+  const MAX_RECORDING_TIME = 6000; // 6 segundos
 
   // Initialize audio elements
   for (let i = 1; i <= 4; i++) {
@@ -699,7 +642,7 @@
   function triggerUpload(slot) {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'audio/*,video/mp4,video/quicktime';
+    input.accept = 'audio/*';
     input.onchange = () => {
       if (input.files[0]) {
         const file = input.files[0];
@@ -754,50 +697,16 @@
 
   async function uploadAudio(file, slot) { 
     try {
-      if (!currentUser || !currentUser.name) {
-        showToast('Error: Usuario no identificado', true);
-        return;
-      }
-
-      // Add user name to filename
-      const userName = currentUser.name.replace(/\s+/g, '_');
-      const fileExtension = file.name.split('.').pop() || 'webm';
-      const fileName = `${userName}_slot${slot}_${Date.now()}.${fileExtension}`;
+      const fileName = Date.now() + "-" + file.name;
       
-      showToast('Subiendo audio...', false);
+      const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
+      if (error) throw error;
       
-      // Upload to Supabase storage
-      const { data: uploadData, error: uploadError } = await supabaseClient.storage
-        .from('QUIO')
-        .upload(fileName, file, { upsert: false });
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        showToast('Error al subir: ' + uploadError.message, true);
-        return;
-      }
-      
-      // Get public URL
       const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
       
-      // Insert record in database with user name
-      const { data: dbData, error: dbError } = await supabaseClient.from('EZE').insert([{ 
-        Audio: urlData.publicUrl, 
-        slot: slot,
-        userName: currentUser.name
-      }]);
-
-      if (dbError) {
-        console.error('Database error:', dbError);
-        showToast('Error en base de datos: ' + dbError.message, true);
-        return;
-      }
-      
-      showToast(`Audio ${slot} subido correctamente ✓`, false);
-      console.log(`Audio ${slot} uploaded successfully for user: ${currentUser.name}`);
+      await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
     } catch(e) {
-      console.error('Upload error:', e);
-      showToast('Error al procesar el audio: ' + e.message, true);
+      console.error(e);
     }
   }
 
@@ -900,7 +809,6 @@
     }
 
     try {
-      // Request microphone access
       stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
@@ -909,12 +817,11 @@
         } 
       }).catch(err => {
         console.error('Microphone error:', err);
-        throw new Error('No se pudo acceder al micrófono. Asegúrate de habilitar los permisos.');
+        throw new Error('No se pudo acceder al micrófono');
       });
 
       audioChunks = [];
       
-      // Try different codecs for better compatibility
       const options = { mimeType: 'audio/webm' };
       if (!MediaRecorder.isTypeSupported(options.mimeType)) {
         options.mimeType = 'audio/mp4';
@@ -928,19 +835,15 @@
       recordingStartTime = Date.now();
       recordingDuration = 0;
 
-      // Update recording timer every 100ms
       recordingInterval = setInterval(() => {
         recordingDuration = Date.now() - recordingStartTime;
         const seconds = Math.floor(recordingDuration / 1000);
         const remaining = Math.max(0, 6 - seconds);
         
-        // Show timer
         btn.innerHTML = `🔴 Grabando... ${seconds}s <span class="recording-timer">${remaining}s</span>`;
         
-        // Stop recording if max time reached
         if (recordingDuration >= MAX_RECORDING_TIME) {
           stopRecording();
-          showToast("Grabación de 6 segundos completada", false);
         }
       }, 100);
 
@@ -957,8 +860,7 @@
           const mimeType = mediaRecorder.mimeType || 'audio/webm';
           const blob = new Blob(audioChunks, { type: mimeType });
           const fileExtension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-          const userName = currentUser.name.replace(/\s+/g, '_');
-          const file = new File([blob], `${userName}_grabacion_${slot}_${Date.now()}.${fileExtension}`, { type: mimeType });
+          const file = new File([blob], `grabacion_${slot}_${Date.now()}.${fileExtension}`, { type: mimeType });
           assignAudio(slot, file);
         }
         
@@ -970,7 +872,7 @@
       mediaRecorder.onerror = (event) => {
         console.error('Recording error:', event.error);
         stopRecording();
-        showToast('Error durante la grabación: ' + event.error, true);
+        showToast('Error durante la grabación', true);
       };
 
       mediaRecorder.start();
@@ -1025,7 +927,6 @@
     clearInterval(recordingInterval);
   });
 
-  // Handle page visibility
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && isRecording) {
       stopRecording();
