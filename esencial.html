@@ -621,6 +621,9 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const essencialUserData = JSON.parse(localStorage.getItem('esencialUser') || '{}');
+  const registeredUserName = essencialUserData.name || 'usuario';
+
   let selectedFiles = {};
   let audioCount = 0;
   let mediaRecorder, audioChunks = [], currentSlot = null, isRecording = false, stream = null;
@@ -695,9 +698,20 @@
     showToast(`Audio ${slot} eliminado`);
   }
 
+  function sanitizeFileName(name) {
+    return name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase() || 'usuario';
+  }
+
   async function uploadAudio(file, slot) { 
     try {
-      const fileName = Date.now() + "-" + file.name;
+      const safeUserName = sanitizeFileName(registeredUserName);
+      const fileName = `${safeUserName}_${Date.now()}-${file.name}`;
       
       const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
       if (error) throw error;
