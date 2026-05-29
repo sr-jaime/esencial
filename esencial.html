@@ -629,12 +629,12 @@
   let mediaRecorder, audioChunks = [], currentSlot = null, isRecording = false, stream = null;
   let currentlyPlaying = null;
   let audioElements = {};
-  let recordingStartTime = 0;
-  let recordingDuration = 0;
-  let recordingInterval = null;
-  const MAX_RECORDING_TIME = 6000; // 6 segundos
+  let recordingStartTime = 0;   // performance.now() timestamp
+  let rafHandle = null;          // requestAnimationFrame handle
+  let autoStopTimeout = null;    // setTimeout handle for hard 6s cutoff
+  const MAX_RECORDING_MS = 6000; // exact 6 seconds
 
-  // NUEVO: Mapa para rastrear el nombre del archivo subido por slot
+  // Mapa para rastrear el nombre del archivo subido por slot
   let uploadedFileNames = {};
 
   // Initialize audio elements
@@ -847,119 +847,187 @@
     }, 1200);
   }
 
-  // Recording functionality with 6 second limit
+  // ─── RECORDING — preciso al frame ────────────────────────────────────────────
+
   async function toggleRecording(slot) {
     const btn = document.getElementById(`recordBtn${slot}`);
-    
+
     if (isRecording && currentSlot === slot) {
       stopRecording();
       return;
     }
-    
+
     if (isRecording) {
       showToast("Ya estás grabando en otro módulo", true);
       return;
     }
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      }).catch(err => {
-        console.error('Microphone error:', err);
-        throw new Error('No se pudo acceder al micrófono');
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
       });
-
-      audioChunks = [];
-      
-      const options = { mimeType: 'audio/webm' };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options.mimeType = 'audio/mp4';
-      }
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options.mimeType = '';
-      }
-
-      mediaRecorder = new MediaRecorder(stream, options);
-      
-      recordingStartTime = Date.now();
-      recordingDuration = 0;
-
-      recordingInterval = setInterval(() => {
-        recordingDuration = Date.now() - recordingStartTime;
-        const seconds = Math.floor(recordingDuration / 1000);
-        // MODIFICADO: Solo mostrar cuenta regresiva (de 6 a 0)
-        const remaining = Math.max(0, 6 - seconds);
-        
-        btn.innerHTML = `🔴 Grabando... <span class="recording-timer">${remaining}s</span>`;
-        
-        if (recordingDuration >= MAX_RECORDING_TIME) {
-          stopRecording();
-        }
-      }, 100);
-
-      mediaRecorder.ondataavailable = e => {
-        if (e.data.size > 0) {
-          audioChunks.push(e.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        clearInterval(recordingInterval);
-        
-        if (audioChunks.length > 0) {
-          const mimeType = mediaRecorder.mimeType || 'audio/webm';
-          const blob = new Blob(audioChunks, { type: mimeType });
-          const fileExtension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-          const file = new File([blob], `grabacion_${slot}_${Date.now()}.${fileExtension}`, { type: mimeType });
-          assignAudio(slot, file);
-        }
-        
-        if (stream) {
-          stream.getTracks().forEach(t => t.stop());
-        }
-      };
-
-      mediaRecorder.onerror = (event) => {
-        console.error('Recording error:', event.error);
-        stopRecording();
-        showToast('Error durante la grabación', true);
-      };
-
-      mediaRecorder.start();
-      isRecording = true;
-      currentSlot = slot;
-      btn.classList.add('btn-recording');
-      
     } catch (err) {
-      console.error('Error:', err);
-      showToast(err.message || "Error al acceder al micrófono", true);
-      if (stream) {
-        stream.getTracks().forEach(t => t.stop());
-      }
+      console.error('Microphone error:', err);
+      showToast('No se pudo acceder al micrófono', true);
+      return;
     }
+
+    audioChunks = [];
+
+    // Pick best supported mimeType
+    const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4', '']
+      .find(m => m === '' || MediaRecorder.isTypeSupported(m));
+
+    mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+
+    let firstChunkTime = null;   // timestamp del primer chunk real de audio
+    let totalChunkMs  = 0;       // ms acumulados de chunks reales
+
+    mediaRecorder.ondataavailable = e => {
+      if (!e.data || e.data.size === 0) return;
+
+      // Arrancar el timer exactamente cuando llega el primer dato real
+      if (firstChunkTime === null) {
+        firstChunkTime = performance.now();
+        recordingStartTime = firstChunkTime;
+
+        // Hard stop: 6 000 ms desde el primer dato real
+        autoStopTimeout = setTimeout(() => {
+          if (isRecording) stopRecording();
+        }, MAX_RECORDING_MS);
+
+        // Arrancar el RAF de display
+        function updateDisplay() {
+          if (!isRecording) return;
+          const elapsed  = performance.now() - firstChunkTime;
+          const remaining = Math.max(0, Math.ceil((MAX_RECORDING_MS - elapsed) / 1000));
+          btn.innerHTML = `🔴 Grabando... <span class="recording-timer">${remaining}s</span>`;
+          rafHandle = requestAnimationFrame(updateDisplay);
+        }
+        rafHandle = requestAnimationFrame(updateDisplay);
+      }
+
+      audioChunks.push(e.data);
+      totalChunkMs += 100; // cada timeslice = 100 ms
+    };
+
+    mediaRecorder.onstop = async () => {
+      if (rafHandle)       { cancelAnimationFrame(rafHandle); rafHandle = null; }
+      if (autoStopTimeout) { clearTimeout(autoStopTimeout);   autoStopTimeout = null; }
+      if (stream)          { stream.getTracks().forEach(t => t.stop()); stream = null; }
+
+      if (audioChunks.length === 0) return;
+
+      const finalMime = mediaRecorder.mimeType || 'audio/webm';
+      const ext       = finalMime.includes('mp4') ? 'mp4' : finalMime.includes('ogg') ? 'ogg' : 'webm';
+      const rawBlob   = new Blob(audioChunks, { type: finalMime });
+
+      // ── Decodificar, recortar a ≤ 6 s y re-exportar como WAV ────────────────
+      let finalBlob = rawBlob;
+      try {
+        const arrayBuffer = await rawBlob.arrayBuffer();
+        const audioCtx    = new AudioContext();
+        const decoded     = await audioCtx.decodeAudioData(arrayBuffer);
+        await audioCtx.close();
+
+        const maxSec     = MAX_RECORDING_MS / 1000;           // 6
+        const sampleRate = decoded.sampleRate;
+        const maxSamples = Math.min(decoded.length, Math.floor(maxSec * sampleRate));
+
+        // Construir AudioBuffer recortado
+        const trimmed = new AudioBuffer({
+          numberOfChannels: decoded.numberOfChannels,
+          length:           maxSamples,
+          sampleRate
+        });
+        for (let ch = 0; ch < decoded.numberOfChannels; ch++) {
+          trimmed.copyToChannel(decoded.getChannelData(ch).subarray(0, maxSamples), ch);
+        }
+
+        // Siempre exportar como WAV para que el navegador reporte duración correcta
+        finalBlob = pcmToWav(trimmed);
+      } catch (e) {
+        console.warn('AudioContext trim skipped:', e);
+        // Fallback: usar el blob original sin recorte
+      }
+
+      const file = new File(
+        [finalBlob],
+        `grabacion_${slot}_${Date.now()}.wav`,
+        { type: 'audio/wav' }
+      );
+      assignAudio(slot, file);
+    };
+
+    mediaRecorder.onerror = (event) => {
+      console.error('Recording error:', event.error);
+      stopRecording();
+      showToast('Error durante la grabación', true);
+    };
+
+    // timeslice = 100 ms → chunks precisos de 100 ms cada uno
+    mediaRecorder.start(100);
+    isRecording       = true;
+    currentSlot       = slot;
+    btn.classList.add('btn-recording');
+    // (recordingStartTime se asigna en el primer ondataavailable)
   }
 
   function stopRecording() {
+    if (rafHandle) { cancelAnimationFrame(rafHandle); rafHandle = null; }
+    if (autoStopTimeout) { clearTimeout(autoStopTimeout); autoStopTimeout = null; }
+
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      try {
-        mediaRecorder.stop();
-      } catch(e) {
-        console.error('Error stopping recorder:', e);
-      }
+      try { mediaRecorder.stop(); } catch(e) { console.error(e); }
     }
-    
-    clearInterval(recordingInterval);
+
     isRecording = false;
     currentSlot = null;
-    
+
     document.querySelectorAll('.btn-record').forEach(b => {
       b.classList.remove('btn-recording');
       b.innerHTML = `🔴 Grabar audio`;
     });
+  }
+
+  // ─── PCM → WAV helper (for trimmed audio) ────────────────────────────────────
+  function pcmToWav(audioBuffer) {
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const numSamples = audioBuffer.length;
+    const bytesPerSample = 2; // 16-bit
+    const blockAlign = numChannels * bytesPerSample;
+    const byteRate = sampleRate * blockAlign;
+    const dataSize = numSamples * blockAlign;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+
+    function writeStr(offset, str) {
+      for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+    }
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);           // PCM
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, 16, true);          // bits per sample
+    writeStr(36, 'data');
+    view.setUint32(40, dataSize, true);
+
+    let offset = 44;
+    for (let i = 0; i < numSamples; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        const sample = Math.max(-1, Math.min(1, audioBuffer.getChannelData(ch)[i]));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        offset += 2;
+      }
+    }
+    return new Blob([buffer], { type: 'audio/wav' });
   }
 
   function showToast(msg, isError = false) {
@@ -971,14 +1039,13 @@
   }
 
   window.addEventListener('beforeunload', () => {
+    if (rafHandle) cancelAnimationFrame(rafHandle);
+    if (autoStopTimeout) clearTimeout(autoStopTimeout);
     if (stream) {
       stream.getTracks().forEach(track => {
-        try {
-          track.stop();
-        } catch(e) {}
+        try { track.stop(); } catch(e) {}
       });
     }
-    clearInterval(recordingInterval);
   });
 
   document.addEventListener('visibilitychange', () => {
