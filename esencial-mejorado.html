@@ -31,6 +31,63 @@
         radial-gradient(circle at 80% 70%, rgba(232, 201, 160, 0.06) 0%, transparent 50%);
     }
 
+    /* Share Success Modal */
+    .share-success-modal {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #E8C9A0 0%, #D4B89F 100%);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeInShare 0.6s ease-out forwards;
+    }
+
+    .share-success-modal.active {
+      display: flex;
+      animation: fadeInShare 0.6s ease-out forwards;
+    }
+
+    .share-success-modal.closing {
+      animation: fadeOutShare 0.8s ease-in forwards;
+    }
+
+    @keyframes fadeInShare {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeOutShare {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .share-success-content {
+      text-align: center;
+      color: #0F0C08;
+      animation: scaleInShare 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes scaleInShare {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .share-success-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .share-success-content p {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     /* ==================== HEADER SIMPLIFICADO ==================== */
     header {
       width: 100%;
@@ -109,21 +166,15 @@
     .question-card:nth-child(4) { animation-delay: 0.4s; }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Colores por módulo */
-    .question-card[data-slot="1"] { border-color: #4A90E2; } /* Azul */
-    .question-card[data-slot="2"] { border-color: #E74C3C; } /* Rojo */
-    .question-card[data-slot="3"] { border-color: #F1C40F; } /* Amarillo */
-    .question-card[data-slot="4"] { border-color: #27AE60; } /* Verde */
+    .question-card[data-slot="1"] { border-color: #4A90E2; }
+    .question-card[data-slot="2"] { border-color: #E74C3C; }
+    .question-card[data-slot="3"] { border-color: #F1C40F; }
+    .question-card[data-slot="4"] { border-color: #27AE60; }
 
     .question-card.has-audio {
       background: rgba(30, 25, 20, 0.95);
@@ -133,12 +184,8 @@
     }
 
     @keyframes glow {
-      0%, 100% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
-      }
-      50% { 
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 201, 160, 0.3);
-      }
+      0%, 100% { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5); }
+      50% { box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(232, 201, 160, 0.3); }
     }
 
     .question-card:hover {
@@ -210,9 +257,7 @@
     }
     .btn:hover::after { transform: translateX(300%); }
 
-    .btn:active {
-      transform: scale(0.97);
-    }
+    .btn:active { transform: scale(0.97); }
 
     .btn-upload { 
       background: linear-gradient(135deg, rgba(212,184,159,0.15), rgba(232,201,160,0.1));
@@ -243,14 +288,8 @@
     }
 
     @keyframes pulseRecording { 
-      0%,100% { 
-        opacity: 1;
-        box-shadow: 0 0 20px rgba(156, 42, 42, 0.8);
-      } 
-      50% { 
-        opacity: 0.7;
-        box-shadow: 0 0 30px rgba(156, 42, 42, 0.5);
-      } 
+      0%,100% { opacity: 1; box-shadow: 0 0 20px rgba(156, 42, 42, 0.8); } 
+      50% { opacity: 0.7; box-shadow: 0 0 30px rgba(156, 42, 42, 0.5); } 
     }
 
     /* Audio Player Styles */
@@ -265,17 +304,12 @@
       gap: 14px;
       border: 1.5px solid rgba(232,201,160,0.3);
       animation: slideUp 0.4s ease-out;
+      flex-wrap: wrap;
     }
 
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .player-controls {
@@ -283,6 +317,7 @@
       align-items: center;
       gap: 14px;
       flex: 1;
+      min-width: 0;
     }
 
     .play-btn {
@@ -300,6 +335,7 @@
       justify-content: center;
       font-weight: 600;
       box-shadow: 0 4px 15px rgba(232, 201, 160, 0.4);
+      flex-shrink: 0;
     }
 
     .play-btn:hover {
@@ -307,15 +343,14 @@
       box-shadow: 0 6px 20px rgba(232, 201, 160, 0.6);
     }
 
-    .play-btn:active {
-      transform: scale(0.95);
-    }
+    .play-btn:active { transform: scale(0.95); }
 
     .progress-container {
       flex: 1;
       display: flex;
       align-items: center;
       gap: 8px;
+      min-width: 0;
     }
 
     .progress-bar {
@@ -326,6 +361,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      min-width: 50px;
     }
 
     .progress-fill {
@@ -343,55 +379,32 @@
       min-width: 50px;
       text-align: right;
       font-weight: 500;
+      flex-shrink: 0;
     }
 
-    .audio-name {
-      font-size: 14px;
-      color: var(--beige);
-      font-weight: 500;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .audio-visualizer {
+    .remove-btn {
+      background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(199,91,53,0.15));
+      color: #FFB3B3;
+      border: 1px solid rgba(255,107,107,0.3);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
-      gap: 4px;
-      height: 24px;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .audio-visualizer .bar {
-      width: 3px;
-      height: 6px;
-      background: linear-gradient(180deg, var(--accent), #D4B89F);
-      border-radius: 2px;
-      opacity: 0.5;
-      transition: height 0.1s ease;
+    .remove-btn:hover {
+      background: linear-gradient(135deg, rgba(255,107,107,0.4), rgba(199,91,53,0.3));
+      transform: scale(1.15) rotate(90deg);
+      box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
     }
 
-    .audio-player.playing .audio-visualizer .bar {
-      animation: audioBar 0.6s ease-in-out infinite;
-      opacity: 1;
-    }
-
-    .audio-visualizer .bar:nth-child(1) { animation-delay: 0s; height: 8px; }
-    .audio-visualizer .bar:nth-child(2) { animation-delay: 0.1s; height: 12px; }
-    .audio-visualizer .bar:nth-child(3) { animation-delay: 0.2s; height: 8px; }
-
-    @keyframes audioBar {
-      0%, 100% {
-        height: 6px;
-        opacity: 0.6;
-      }
-      50% {
-        height: 16px;
-        opacity: 1;
-        filter: drop-shadow(0 0 6px rgba(232, 201, 160, 0.8));
-      }
-    }
-
+    /* Share Button */
     #shareBtn {
       position: fixed;
       bottom: 32px;
@@ -414,47 +427,9 @@
       animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    #shareBtn.celebrating {
-      animation: celebrateShare 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes celebrateShare {
-      0% {
-        transform: translateX(-50%) scale(1) rotate(0deg);
-        opacity: 1;
-      }
-      25% {
-        transform: translateX(-50%) scale(1.15) rotate(-5deg);
-      }
-      50% {
-        transform: translateX(-50%) scale(1.2) rotate(5deg);
-      }
-      75% {
-        transform: translateX(-50%) scale(1.15) rotate(-5deg);
-      }
-      100% {
-        transform: translateX(-50%) scale(1) rotate(0deg);
-      }
-    }
-
-    @keyframes confetti {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100px) rotate(720deg) scale(0);
-        opacity: 0;
-      }
-    }
-
-    .confetti {
-      position: fixed;
-      pointer-events: none;
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
-      animation: confetti 0.8s ease-out forwards;
+    @keyframes popIn {
+      from { opacity: 0; transform: translateX(-50%) scale(0.8); }
+      to { opacity: 1; transform: translateX(-50%) scale(1); }
     }
 
     #shareBtn:hover {
@@ -480,6 +455,7 @@
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 200;
+      max-width: 90%;
     }
 
     .toast.show { 
@@ -489,19 +465,20 @@
     }
 
     @keyframes toastSlide {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-12px);
-      }
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(-12px); }
     }
 
     .toast.error {
       border-color: #C75B35;
       background: rgba(199, 91, 53, 0.15);
+    }
+
+    .recording-timer {
+      display: inline-block;
+      margin-left: 8px;
+      font-weight: 600;
+      color: #FFE8E8;
     }
 
     @media (max-width: 640px) {
@@ -510,12 +487,29 @@
       }
 
       .audio-player {
-        justify-content: center;
+        justify-content: flex-start;
+      }
+
+      .btn {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+
+      #shareBtn {
+        padding: 14px 40px;
+        font-size: 15px;
       }
     }
   </style>
 </head>
 <body>
+
+  <div class="share-success-modal" id="shareSuccessModal">
+    <div class="share-success-content">
+      <h2>GRACIAS</h2>
+      <p>COMPARTIDO CON ÉXITO</p>
+    </div>
+  </div>
 
   <header>
     <div class="header-container">
@@ -530,17 +524,14 @@
 
     <div class="question-card" data-slot="1">
       <div class="question-number">1</div>
-      <p class="question-text">¿Qué sonido/canción te recuerda a tu infancia?</p>
+      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante en tu vida?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(1)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🔴 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player1">
         <div class="player-controls">
           <button class="play-btn" id="playBtn1" onclick="togglePlayPause(1)">▶</button>
-          <div class="audio-visualizer" id="visualizer1">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          </div>
           <div class="progress-container">
             <div class="progress-bar" id="progressBar1" onclick="seek(event, 1)">
               <div class="progress-fill" id="progressFill1"></div>
@@ -548,25 +539,21 @@
             <span class="time-display" id="timeDisplay1">0:00</span>
           </div>
         </div>
-        <span class="audio-name" id="audioName1"></span>
         <button class="remove-btn" onclick="removeAudio(1)">×</button>
       </div>
-      <audio id="audio1"></audio>
+      <audio id="audio1" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="2">
       <div class="question-number">2</div>
-      <p class="question-text">¿Qué sonido7canción te representa actualmente y podría servir para que alguien te recuerde?</p>
+      <p class="question-text">¿Qué sonido te hace recordar un momento importante de tu vida?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🔴 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player2">
         <div class="player-controls">
           <button class="play-btn" id="playBtn2" onclick="togglePlayPause(2)">▶</button>
-          <div class="audio-visualizer" id="visualizer2">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          </div>
           <div class="progress-container">
             <div class="progress-bar" id="progressBar2" onclick="seek(event, 2)">
               <div class="progress-fill" id="progressFill2"></div>
@@ -574,25 +561,21 @@
             <span class="time-display" id="timeDisplay2">0:00</span>
           </div>
         </div>
-        <span class="audio-name" id="audioName2"></span>
         <button class="remove-btn" onclick="removeAudio(2)">×</button>
       </div>
-      <audio id="audio2"></audio>
+      <audio id="audio2" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="3">
       <div class="question-number">3</div>
-      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante de tu vida?</p>
+      <p class="question-text">¿Qué sonido te recuerda a tu infancia?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🔴 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player3">
         <div class="player-controls">
           <button class="play-btn" id="playBtn3" onclick="togglePlayPause(3)">▶</button>
-          <div class="audio-visualizer" id="visualizer3">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          </div>
           <div class="progress-container">
             <div class="progress-bar" id="progressBar3" onclick="seek(event, 3)">
               <div class="progress-fill" id="progressFill3"></div>
@@ -600,25 +583,21 @@
             <span class="time-display" id="timeDisplay3">0:00</span>
           </div>
         </div>
-        <span class="audio-name" id="audioName3"></span>
         <button class="remove-btn" onclick="removeAudio(3)">×</button>
       </div>
-      <audio id="audio3"></audio>
+      <audio id="audio3" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="4">
       <div class="question-number">4</div>
-      <p class="question-text">¿Qué sonido/canción te hace recordar un momento importante de tu vida?</p>
+      <p class="question-text">Si tuvieran que recordarte actualmente por un sonido, ¿Qué sonido sería?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(4)">📁 Subir archivo</button>
-        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🔴 Grabar ahora</button>
+        <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🔴 Grabar audio</button>
       </div>
       <div class="audio-player" id="player4">
         <div class="player-controls">
           <button class="play-btn" id="playBtn4" onclick="togglePlayPause(4)">▶</button>
-          <div class="audio-visualizer" id="visualizer4">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-          </div>
           <div class="progress-container">
             <div class="progress-bar" id="progressBar4" onclick="seek(event, 4)">
               <div class="progress-fill" id="progressFill4"></div>
@@ -626,10 +605,9 @@
             <span class="time-display" id="timeDisplay4">0:00</span>
           </div>
         </div>
-        <span class="audio-name" id="audioName4"></span>
         <button class="remove-btn" onclick="removeAudio(4)">×</button>
       </div>
-      <audio id="audio4"></audio>
+      <audio id="audio4" crossorigin="anonymous"></audio>
     </div>
 
   </div>
@@ -643,11 +621,21 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZHRycW93aGpheXZ5YmpyZ2hiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjkzNDgsImV4cCI6MjA5MDA0NTM0OH0.Yzn4QEIluAFgtkevEy3qvpNMGSqfnIkLjBiuR3iu-YQ";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const essencialUserData = JSON.parse(localStorage.getItem('esencialUser') || '{}');
+  const registeredUserName = essencialUserData.name || 'usuario';
+
   let selectedFiles = {};
   let audioCount = 0;
   let mediaRecorder, audioChunks = [], currentSlot = null, isRecording = false, stream = null;
   let currentlyPlaying = null;
   let audioElements = {};
+  let recordingStartTime = 0;
+  let recordingDuration = 0;
+  let recordingInterval = null;
+  const MAX_RECORDING_TIME = 6000; // 6 segundos
+
+  // NUEVO: Mapa para rastrear el nombre del archivo subido por slot
+  let uploadedFileNames = {};
 
   // Initialize audio elements
   for (let i = 1; i <= 4; i++) {
@@ -662,34 +650,60 @@
     input.type = 'file';
     input.accept = 'audio/*';
     input.onchange = () => {
-      if (input.files[0]) assignAudio(slot, input.files[0]);
+      if (input.files[0]) {
+        const file = input.files[0];
+        assignAudio(slot, file);
+      }
     };
     input.click();
   }
 
   function assignAudio(slot, file) {
+    // MODIFICADO: Ya no bloqueamos si el slot ya tiene audio,
+    // porque vamos a reemplazarlo. Solo bloqueamos si todos los
+    // slots están llenos Y este slot no tiene audio aún.
     if (audioCount >= 4 && !selectedFiles[slot]) {
       showToast("Máximo 4 audios permitidos", true);
       return;
     }
 
+    // NUEVO: Si ya había un audio en este slot, eliminarlo de Supabase primero
+    if (selectedFiles[slot] && uploadedFileNames[slot]) {
+      deleteFromSupabase(uploadedFileNames[slot]);
+      delete uploadedFileNames[slot];
+    }
+
+    // Solo incrementar el contador si el slot estaba vacío antes
+    if (!selectedFiles[slot]) audioCount++;
+
     selectedFiles[slot] = file;
-    if (!document.getElementById(`player${slot}`).style.display.includes('flex')) audioCount++;
 
     const container = document.getElementById(`player${slot}`);
     container.style.display = 'flex';
+
+    // Stop and reset audio if it was playing
+    if (currentlyPlaying === slot) {
+      audioElements[slot].pause();
+      currentlyPlaying = null;
+      document.getElementById(`playBtn${slot}`).textContent = '▶';
+    }
 
     // Create audio URL and set it
     const audioURL = URL.createObjectURL(file);
     audioElements[slot].src = audioURL;
 
-    // Show audio filename
-    const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
-    document.getElementById(`audioName${slot}`).textContent = fileName;
-
     document.querySelector(`.question-card[data-slot="${slot}"]`).classList.add('has-audio');
     checkShareButton();
     uploadAudio(file, slot);
+  }
+
+  // NUEVO: Eliminar archivo anterior de Supabase Storage
+  async function deleteFromSupabase(fileName) {
+    try {
+      await supabaseClient.storage.from('QUIO').remove([fileName]);
+    } catch(e) {
+      console.error('Error eliminando archivo anterior:', e);
+    }
   }
 
   function removeAudio(slot) {
@@ -702,12 +716,17 @@
       document.getElementById(`playBtn${slot}`).textContent = '▶';
     }
 
+    // NUEVO: Eliminar de Supabase al remover
+    if (uploadedFileNames[slot]) {
+      deleteFromSupabase(uploadedFileNames[slot]);
+      delete uploadedFileNames[slot];
+    }
+
     delete selectedFiles[slot];
     audioCount = Math.max(0, audioCount - 1);
     
     const container = document.getElementById(`player${slot}`);
     container.style.display = 'none';
-    container.classList.remove('playing');
     audioElements[slot].src = '';
     document.querySelector(`.question-card[data-slot="${slot}"]`).classList.remove('has-audio');
     
@@ -715,12 +734,29 @@
     showToast(`Audio ${slot} eliminado`);
   }
 
+  function sanitizeFileName(name) {
+    return name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase() || 'usuario';
+  }
+
   async function uploadAudio(file, slot) { 
     try {
-      const fileName = Date.now() + "-" + file.name;
+      const safeUserName = sanitizeFileName(registeredUserName);
+      const fileName = `${safeUserName}_${Date.now()}-${file.name}`;
+      
       const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
       if (error) throw error;
+      
       const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
+      
+      // NUEVO: Guardar el nombre del archivo subido para este slot
+      uploadedFileNames[slot] = fileName;
+
       await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
     } catch(e) {
       console.error(e);
@@ -730,23 +766,27 @@
   function togglePlayPause(slot) {
     const audio = audioElements[slot];
     const btn = document.getElementById(`playBtn${slot}`);
-    const player = document.getElementById(`player${slot}`);
+
+    if (!audio.src) {
+      showToast('No hay audio para reproducir', true);
+      return;
+    }
 
     if (currentlyPlaying && currentlyPlaying !== slot) {
       audioElements[currentlyPlaying].pause();
       document.getElementById(`playBtn${currentlyPlaying}`).textContent = '▶';
-      document.getElementById(`player${currentlyPlaying}`).classList.remove('playing');
     }
 
     if (audio.paused) {
-      audio.play();
+      audio.play().catch(err => {
+        console.error('Error playing audio:', err);
+        showToast('Error al reproducir', true);
+      });
       btn.textContent = '⏸';
-      player.classList.add('playing');
       currentlyPlaying = slot;
     } else {
       audio.pause();
       btn.textContent = '▶';
-      player.classList.remove('playing');
       currentlyPlaying = null;
     }
   }
@@ -776,6 +816,8 @@
 
   function seek(event, slot) {
     const audio = audioElements[slot];
+    if (!audio.duration) return;
+    
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const percent = x / rect.width;
@@ -784,7 +826,6 @@
 
   function handleAudioEnded(slot) {
     document.getElementById(`playBtn${slot}`).textContent = '▶';
-    document.getElementById(`player${slot}`).classList.remove('playing');
     currentlyPlaying = null;
   }
 
@@ -793,70 +834,131 @@
   }
 
   function shareCollection() {
-    const btn = document.getElementById('shareBtn');
-    btn.classList.add('celebrating');
+    const modal = document.getElementById('shareSuccessModal');
+    modal.classList.remove('closing');
+    modal.classList.add('active');
     
-    // Create confetti
-    for (let i = 0; i < 25; i++) {
+    setTimeout(() => {
+      modal.classList.add('closing');
       setTimeout(() => {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = btn.offsetLeft + 90 + 'px';
-        confetti.style.top = btn.offsetTop + 25 + 'px';
-        confetti.style.background = ['var(--accent)', '#D4B89F', '#4A90E2', '#E74C3C', '#F1C40F'][Math.floor(Math.random() * 5)];
-        confetti.style.transform = `translateX(${(Math.random() - 0.5) * 150}px)`;
-        document.body.appendChild(confetti);
-        
-        setTimeout(() => confetti.remove(), 800);
-      }, i * 30);
-    }
-    
-    setTimeout(() => btn.classList.remove('celebrating'), 800);
-    showToast("¡Colección compartida!");
+        modal.classList.remove('active');
+        modal.classList.remove('closing');
+      }, 800);
+    }, 1200);
   }
 
-  // Recording functionality
+  // Recording functionality with 6 second limit
   async function toggleRecording(slot) {
     const btn = document.getElementById(`recordBtn${slot}`);
+    
     if (isRecording && currentSlot === slot) {
       stopRecording();
       return;
     }
+    
     if (isRecording) {
       showToast("Ya estás grabando en otro módulo", true);
       return;
     }
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
+      stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      }).catch(err => {
+        console.error('Microphone error:', err);
+        throw new Error('No se pudo acceder al micrófono');
+      });
 
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      audioChunks = [];
+      
+      const options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'audio/mp4';
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = '';
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+      
+      recordingStartTime = Date.now();
+      recordingDuration = 0;
+
+      recordingInterval = setInterval(() => {
+        recordingDuration = Date.now() - recordingStartTime;
+        const seconds = Math.floor(recordingDuration / 1000);
+        // MODIFICADO: Solo mostrar cuenta regresiva (de 6 a 0)
+        const remaining = Math.max(0, 6 - seconds);
+        
+        btn.innerHTML = `🔴 Grabando... <span class="recording-timer">${remaining}s</span>`;
+        
+        if (recordingDuration >= MAX_RECORDING_TIME) {
+          stopRecording();
+        }
+      }, 100);
+
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          audioChunks.push(e.data);
+        }
+      };
+
       mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const file = new File([blob], `grabacion_${slot}_${Date.now()}.webm`, { type: 'audio/webm' });
-        assignAudio(slot, file);
-        stream.getTracks().forEach(t => t.stop());
+        clearInterval(recordingInterval);
+        
+        if (audioChunks.length > 0) {
+          const mimeType = mediaRecorder.mimeType || 'audio/webm';
+          const blob = new Blob(audioChunks, { type: mimeType });
+          const fileExtension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+          const file = new File([blob], `grabacion_${slot}_${Date.now()}.${fileExtension}`, { type: mimeType });
+          assignAudio(slot, file);
+        }
+        
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
+        }
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error('Recording error:', event.error);
+        stopRecording();
+        showToast('Error durante la grabación', true);
       };
 
       mediaRecorder.start();
       isRecording = true;
       currentSlot = slot;
       btn.classList.add('btn-recording');
-      btn.innerHTML = `◼ Detener`;
+      
     } catch (err) {
-      showToast("Error al acceder al micrófono", true);
+      console.error('Error:', err);
+      showToast(err.message || "Error al acceder al micrófono", true);
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+      }
     }
   }
 
   function stopRecording() {
-    if (mediaRecorder) mediaRecorder.stop();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      try {
+        mediaRecorder.stop();
+      } catch(e) {
+        console.error('Error stopping recorder:', e);
+      }
+    }
+    
+    clearInterval(recordingInterval);
     isRecording = false;
     currentSlot = null;
+    
     document.querySelectorAll('.btn-record').forEach(b => {
       b.classList.remove('btn-recording');
-      b.innerHTML = `🔴 Grabar ahora`;
+      b.innerHTML = `🔴 Grabar audio`;
     });
   }
 
@@ -869,7 +971,20 @@
   }
 
   window.addEventListener('beforeunload', () => {
-    if (stream) stream.getTracks().forEach(track => track.stop());
+    if (stream) {
+      stream.getTracks().forEach(track => {
+        try {
+          track.stop();
+        } catch(e) {}
+      });
+    }
+    clearInterval(recordingInterval);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && isRecording) {
+      stopRecording();
+    }
   });
 </script>
 </body>
