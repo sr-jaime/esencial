@@ -404,6 +404,18 @@
       box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
     }
 
+    .audio-filename {
+      width: 100%;
+      font-size: 12px;
+      color: rgba(245, 237, 228, 0.55);
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+
     /* Share Button */
     #shareBtn {
       position: fixed;
@@ -524,7 +536,7 @@
 
     <div class="question-card" data-slot="1">
       <div class="question-number">1</div>
-      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante en tu vida?</p>
+      <p class="question-text">¿Qué sonido/canción te recuerda a tu infancia?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(1)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn1" onclick="toggleRecording(1)">🔴 Grabar audio</button>
@@ -540,13 +552,14 @@
           </div>
         </div>
         <button class="remove-btn" onclick="removeAudio(1)">×</button>
+        <span class="audio-filename" id="filename1"></span>
       </div>
       <audio id="audio1" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="2">
       <div class="question-number">2</div>
-      <p class="question-text">¿Qué sonido te hace recordar un momento importante de tu vida?</p>
+      <p class="question-text">¿Qué sonido/canción te representa actualmente y podría servir para que alguien te recuerde?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🔴 Grabar audio</button>
@@ -562,13 +575,14 @@
           </div>
         </div>
         <button class="remove-btn" onclick="removeAudio(2)">×</button>
+        <span class="audio-filename" id="filename2"></span>
       </div>
       <audio id="audio2" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="3">
       <div class="question-number">3</div>
-      <p class="question-text">¿Qué sonido te recuerda a tu infancia?</p>
+      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante en tu vida?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🔴 Grabar audio</button>
@@ -584,13 +598,14 @@
           </div>
         </div>
         <button class="remove-btn" onclick="removeAudio(3)">×</button>
+        <span class="audio-filename" id="filename3"></span>
       </div>
       <audio id="audio3" crossorigin="anonymous"></audio>
     </div>
 
     <div class="question-card" data-slot="4">
       <div class="question-number">4</div>
-      <p class="question-text">Si tuvieran que recordarte actualmente por un sonido, ¿Qué sonido sería?</p>
+      <p class="question-text">¿Qué sonido/canción te hace recordar un momento importante de tu vida?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(4)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn4" onclick="toggleRecording(4)">🔴 Grabar audio</button>
@@ -606,6 +621,7 @@
           </div>
         </div>
         <button class="remove-btn" onclick="removeAudio(4)">×</button>
+        <span class="audio-filename" id="filename4"></span>
       </div>
       <audio id="audio4" crossorigin="anonymous"></audio>
     </div>
@@ -629,12 +645,11 @@
   let mediaRecorder, audioChunks = [], currentSlot = null, isRecording = false, stream = null;
   let currentlyPlaying = null;
   let audioElements = {};
-  let recordingStartTime = 0;   // performance.now() timestamp
-  let rafHandle = null;          // requestAnimationFrame handle
-  let autoStopTimeout = null;    // setTimeout handle for hard 6s cutoff
-  const MAX_RECORDING_MS = 6000; // exact 6 seconds
+  let recordingStartTime = 0;
+  let rafHandle = null;
+  let autoStopTimeout = null;
+  const MAX_RECORDING_MS = 6000;
 
-  // Mapa para rastrear el nombre del archivo subido por slot
   let uploadedFileNames = {};
 
   // Initialize audio elements
@@ -659,21 +674,16 @@
   }
 
   function assignAudio(slot, file) {
-    // MODIFICADO: Ya no bloqueamos si el slot ya tiene audio,
-    // porque vamos a reemplazarlo. Solo bloqueamos si todos los
-    // slots están llenos Y este slot no tiene audio aún.
     if (audioCount >= 4 && !selectedFiles[slot]) {
       showToast("Máximo 4 audios permitidos", true);
       return;
     }
 
-    // NUEVO: Si ya había un audio en este slot, eliminarlo de Supabase primero
     if (selectedFiles[slot] && uploadedFileNames[slot]) {
       deleteFromSupabase(uploadedFileNames[slot]);
       delete uploadedFileNames[slot];
     }
 
-    // Solo incrementar el contador si el slot estaba vacío antes
     if (!selectedFiles[slot]) audioCount++;
 
     selectedFiles[slot] = file;
@@ -681,23 +691,21 @@
     const container = document.getElementById(`player${slot}`);
     container.style.display = 'flex';
 
-    // Stop and reset audio if it was playing
     if (currentlyPlaying === slot) {
       audioElements[slot].pause();
       currentlyPlaying = null;
       document.getElementById(`playBtn${slot}`).textContent = '▶';
     }
 
-    // Create audio URL and set it
     const audioURL = URL.createObjectURL(file);
     audioElements[slot].src = audioURL;
 
     document.querySelector(`.question-card[data-slot="${slot}"]`).classList.add('has-audio');
+    document.getElementById(`filename${slot}`).textContent = file.name;
     checkShareButton();
     uploadAudio(file, slot);
   }
 
-  // NUEVO: Eliminar archivo anterior de Supabase Storage
   async function deleteFromSupabase(fileName) {
     try {
       await supabaseClient.storage.from('QUIO').remove([fileName]);
@@ -709,14 +717,12 @@
   function removeAudio(slot) {
     if (!selectedFiles[slot]) return;
     
-    // Stop playing if this audio is playing
     if (currentlyPlaying === slot) {
       audioElements[slot].pause();
       currentlyPlaying = null;
       document.getElementById(`playBtn${slot}`).textContent = '▶';
     }
 
-    // NUEVO: Eliminar de Supabase al remover
     if (uploadedFileNames[slot]) {
       deleteFromSupabase(uploadedFileNames[slot]);
       delete uploadedFileNames[slot];
@@ -729,7 +735,7 @@
     container.style.display = 'none';
     audioElements[slot].src = '';
     document.querySelector(`.question-card[data-slot="${slot}"]`).classList.remove('has-audio');
-    
+    document.getElementById(`filename${slot}`).textContent = '';
     checkShareButton();
     showToast(`Audio ${slot} eliminado`);
   }
@@ -744,23 +750,107 @@
       .toLowerCase() || 'usuario';
   }
 
-  async function uploadAudio(file, slot) { 
-    try {
-      const safeUserName = sanitizeFileName(registeredUserName);
-      const fileName = `${safeUserName}_${Date.now()}-${file.name}`;
-      
-      const { error } = await supabaseClient.storage.from('QUIO').upload(fileName, file);
-      if (error) throw error;
-      
-      const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
-      
-      // NUEVO: Guardar el nombre del archivo subido para este slot
-      uploadedFileNames[slot] = fileName;
+  // Devuelve { mimeType, ext } a partir de un File, con fallbacks robustos
+  function resolveAudioType(file) {
+    // Mapa de extensiones → MIME canónico
+    const extMap = {
+      mp3:  'audio/mpeg',
+      mp4:  'audio/mp4',
+      m4a:  'audio/mp4',
+      aac:  'audio/aac',
+      ogg:  'audio/ogg',
+      oga:  'audio/ogg',
+      opus: 'audio/ogg; codecs=opus',
+      wav:  'audio/wav',
+      wave: 'audio/wav',
+      flac: 'audio/flac',
+      webm: 'audio/webm',
+      caf:  'audio/x-caf',
+      amr:  'audio/amr',
+      '3gp': 'audio/3gpp',
+      '3gpp':'audio/3gpp',
+      aiff: 'audio/aiff',
+      aif:  'audio/aiff',
+    };
 
-      await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
-    } catch(e) {
-      console.error(e);
+    // 1. Extraer extensión del nombre original
+    const rawExt = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // 2. MIME preferido: primero el del archivo si es válido, luego el del mapa
+    let mimeType = (file.type && file.type !== 'application/octet-stream' && file.type.startsWith('audio/'))
+      ? file.type
+      : (extMap[rawExt] || 'audio/mpeg');
+
+    // 3. Extensión canónica para el nombre en Supabase
+    const mimeToExt = {
+      'audio/mpeg': 'mp3',
+      'audio/mp4':  'm4a',
+      'audio/aac':  'aac',
+      'audio/ogg':  'ogg',
+      'audio/wav':  'wav',
+      'audio/wave': 'wav',
+      'audio/flac': 'flac',
+      'audio/webm': 'webm',
+      'audio/x-caf':'caf',
+      'audio/amr':  'amr',
+      'audio/3gpp': '3gp',
+      'audio/aiff': 'aiff',
+    };
+    // Normalizar mimeType quitando parámetros (ej. "audio/ogg; codecs=opus" → "audio/ogg")
+    const baseMime = mimeType.split(';')[0].trim();
+    const ext = mimeToExt[baseMime] || rawExt || 'mp3';
+
+    return { mimeType, ext };
+  }
+
+  async function uploadAudio(file, slot) {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 1500;
+
+    const safeUserName = sanitizeFileName(registeredUserName);
+    const { mimeType, ext } = resolveAudioType(file);
+
+    // Nombre 100% seguro para Supabase Storage: usuario primero, luego pregunta, luego nombre original
+    const safeOriginalName = sanitizeFileName(file.name.replace(/\.[^/.]+$/, '')) || 'audio';
+    const fileName = `${safeUserName}_pregunta${slot}_${safeOriginalName}_${Date.now()}.${ext}`;
+
+    // Convertir a Blob con MIME explícito para garantizar el Content-Type en el upload
+    const safeBlob = file.slice(0, file.size, mimeType);
+
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const { error: uploadError } = await supabaseClient.storage
+          .from('QUIO')
+          .upload(fileName, safeBlob, {
+            contentType: mimeType,
+            upsert: false,
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabaseClient.storage.from('QUIO').getPublicUrl(fileName);
+
+        uploadedFileNames[slot] = fileName;
+
+        await supabaseClient.from('EZE').insert([{ Audio: urlData.publicUrl, slot: slot }]);
+
+        return; // éxito — salir
+
+      } catch (err) {
+        lastError = err;
+        console.warn(`Upload intento ${attempt}/${MAX_RETRIES} fallido:`, err);
+
+        if (attempt < MAX_RETRIES) {
+          await new Promise(res => setTimeout(res, RETRY_DELAY_MS * attempt));
+        }
+      }
     }
+
+    // Todos los intentos fallaron
+    console.error('Upload definitivamente fallido:', lastError);
+    showToast('Error al subir el audio. Intenta de nuevo.', true);
   }
 
   function togglePlayPause(slot) {
@@ -874,29 +964,25 @@
 
     audioChunks = [];
 
-    // Pick best supported mimeType
     const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4', '']
       .find(m => m === '' || MediaRecorder.isTypeSupported(m));
 
     mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
 
-    let firstChunkTime = null;   // timestamp del primer chunk real de audio
-    let totalChunkMs  = 0;       // ms acumulados de chunks reales
+    let firstChunkTime = null;
+    let totalChunkMs  = 0;
 
     mediaRecorder.ondataavailable = e => {
       if (!e.data || e.data.size === 0) return;
 
-      // Arrancar el timer exactamente cuando llega el primer dato real
       if (firstChunkTime === null) {
         firstChunkTime = performance.now();
         recordingStartTime = firstChunkTime;
 
-        // Hard stop: 6 000 ms desde el primer dato real
         autoStopTimeout = setTimeout(() => {
           if (isRecording) stopRecording();
         }, MAX_RECORDING_MS);
 
-        // Arrancar el RAF de display
         function updateDisplay() {
           if (!isRecording) return;
           const elapsed  = performance.now() - firstChunkTime;
@@ -908,7 +994,7 @@
       }
 
       audioChunks.push(e.data);
-      totalChunkMs += 100; // cada timeslice = 100 ms
+      totalChunkMs += 100;
     };
 
     mediaRecorder.onstop = async () => {
@@ -922,7 +1008,6 @@
       const ext       = finalMime.includes('mp4') ? 'mp4' : finalMime.includes('ogg') ? 'ogg' : 'webm';
       const rawBlob   = new Blob(audioChunks, { type: finalMime });
 
-      // ── Decodificar, recortar a ≤ 6 s y re-exportar como WAV ────────────────
       let finalBlob = rawBlob;
       try {
         const arrayBuffer = await rawBlob.arrayBuffer();
@@ -930,11 +1015,10 @@
         const decoded     = await audioCtx.decodeAudioData(arrayBuffer);
         await audioCtx.close();
 
-        const maxSec     = MAX_RECORDING_MS / 1000;           // 6
+        const maxSec     = MAX_RECORDING_MS / 1000;
         const sampleRate = decoded.sampleRate;
         const maxSamples = Math.min(decoded.length, Math.floor(maxSec * sampleRate));
 
-        // Construir AudioBuffer recortado
         const trimmed = new AudioBuffer({
           numberOfChannels: decoded.numberOfChannels,
           length:           maxSamples,
@@ -944,11 +1028,9 @@
           trimmed.copyToChannel(decoded.getChannelData(ch).subarray(0, maxSamples), ch);
         }
 
-        // Siempre exportar como WAV para que el navegador reporte duración correcta
         finalBlob = pcmToWav(trimmed);
       } catch (e) {
         console.warn('AudioContext trim skipped:', e);
-        // Fallback: usar el blob original sin recorte
       }
 
       const file = new File(
@@ -965,12 +1047,10 @@
       showToast('Error durante la grabación', true);
     };
 
-    // timeslice = 100 ms → chunks precisos de 100 ms cada uno
     mediaRecorder.start(100);
     isRecording       = true;
     currentSlot       = slot;
     btn.classList.add('btn-recording');
-    // (recordingStartTime se asigna en el primer ondataavailable)
   }
 
   function stopRecording() {
@@ -995,7 +1075,7 @@
     const numChannels = audioBuffer.numberOfChannels;
     const sampleRate = audioBuffer.sampleRate;
     const numSamples = audioBuffer.length;
-    const bytesPerSample = 2; // 16-bit
+    const bytesPerSample = 2;
     const blockAlign = numChannels * bytesPerSample;
     const byteRate = sampleRate * blockAlign;
     const dataSize = numSamples * blockAlign;
@@ -1010,12 +1090,12 @@
     writeStr(8, 'WAVE');
     writeStr(12, 'fmt ');
     view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);           // PCM
+    view.setUint16(20, 1, true);
     view.setUint16(22, numChannels, true);
     view.setUint32(24, sampleRate, true);
     view.setUint32(28, byteRate, true);
     view.setUint16(32, blockAlign, true);
-    view.setUint16(34, 16, true);          // bits per sample
+    view.setUint16(34, 16, true);
     writeStr(36, 'data');
     view.setUint32(40, dataSize, true);
 
