@@ -556,7 +556,7 @@
 
     <div class="question-card" data-slot="2">
       <div class="question-number">2</div>
-      <p class="question-text">¿Qué sonido/canción te representa actualmente y podría servir para que alguien te recuerde?</p>
+      <p class="question-text">¿Qué sonido7canción te representa actualmente y podría servir para que alguien te recuerde?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(2)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn2" onclick="toggleRecording(2)">🎤 Grabar ahora</button>
@@ -582,7 +582,7 @@
 
     <div class="question-card" data-slot="3">
       <div class="question-number">3</div>
-      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante en tu vida?</p>
+      <p class="question-text">¿Qué sonido/canción te recuerda a una persona importante de tu vida?</p>
       <div class="action-buttons">
         <button class="btn btn-upload" onclick="triggerUpload(3)">📁 Subir archivo</button>
         <button class="btn btn-record" id="recordBtn3" onclick="toggleRecording(3)">🎤 Grabar ahora</button>
@@ -812,7 +812,7 @@
     }
     
     setTimeout(() => btn.classList.remove('celebrating'), 800);
-    showToast("¡Colección compartida! 🎉");
+    showToast("¡Colección compartida!");
   }
 
   // Recording functionality
@@ -844,7 +844,7 @@
       isRecording = true;
       currentSlot = slot;
       btn.classList.add('btn-recording');
-      btn.innerHTML = `⏹️ Detener`;
+      btn.innerHTML = `◼ Detener`;
     } catch (err) {
       showToast("Error al acceder al micrófono", true);
     }
@@ -856,7 +856,7 @@
     currentSlot = null;
     document.querySelectorAll('.btn-record').forEach(b => {
       b.classList.remove('btn-recording');
-      b.innerHTML = `🎤 Grabar ahora`;
+      b.innerHTML = `🔴 Grabar ahora`;
     });
   }
 
