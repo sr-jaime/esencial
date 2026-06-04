@@ -228,6 +228,110 @@
       margin-bottom: 12px;
     }
 
+    /* ── HELP ORB ── */
+    .help-orb {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: radial-gradient(circle at 35% 30%, rgba(100, 180, 255, 0.95), rgba(30, 100, 220, 0.7));
+      box-shadow: 0 0 18px rgba(80, 160, 255, 0.9), 0 0 40px rgba(60, 130, 255, 0.5);
+      animation: blinkOrb 2s ease-in-out infinite;
+      border: 2px solid rgba(160, 210, 255, 0.6);
+      transition: transform 0.2s ease;
+      user-select: none;
+    }
+
+    .help-orb:hover {
+      transform: scale(1.12);
+    }
+
+    .help-orb:active {
+      transform: scale(0.95);
+    }
+
+    .help-orb span {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 0 0 12px rgba(255,255,255,0.8);
+      pointer-events: none;
+    }
+
+    @keyframes blinkOrb {
+      0%, 100% {
+        box-shadow: 0 0 18px rgba(80, 160, 255, 0.9), 0 0 40px rgba(60, 130, 255, 0.5);
+        opacity: 1;
+      }
+      50% {
+        box-shadow: 0 0 6px rgba(80, 160, 255, 0.3), 0 0 14px rgba(60, 130, 255, 0.15);
+        opacity: 0.65;
+      }
+    }
+
+    /* ── VIDEO OVERLAY ── */
+    .video-overlay {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.9s ease;
+    }
+
+    .video-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .video-overlay.fading {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .video-overlay video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .video-close {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      background: rgba(255, 0, 0, 0.15);
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100000;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+
+    .video-close:hover {
+      background: rgba(255, 0, 0, 0.8);
+    }
+
     /* Responsive */
     @media (max-width: 640px) {
       .buttons-section {
@@ -242,10 +346,35 @@
       h1 {
         font-size: 2.8rem;
       }
+
+      .help-orb {
+        top: 16px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+      }
+
+      .help-orb span {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- HELP ORB -->
+  <div class="help-orb" id="helpOrb" title="¿Qué es ESENCIAL?">
+    <span>?</span>
+  </div>
+
+  <!-- VIDEO OVERLAY -->
+  <div class="video-overlay" id="videoOverlay">
+    <button class="video-close" id="videoClose" title="Cerrar">&#x2715;</button>
+    <video id="helpVideo" playsinline>
+      <!-- Reemplaza el src con la ruta real de tu video -->
+      <source src="QUIO.mp4" type="video/mp4">
+    </video>
+  </div>
 
   <div class="container">
     <header>
@@ -267,7 +396,7 @@
       <a href="compartir.html" class="btn-card">
         <span class="btn-icon">🎙️</span>
         <span class="btn-text">COMPARTIR</span>
-        <span class="btn-description">Comparte tu historia sonora</span>
+        <span class="btn-description">Se parte de este proyecto</span>
       </a>
     </section>
 
@@ -276,5 +405,41 @@
     </section>
   </div>
 
+  <script>
+    const helpOrb = document.getElementById('helpOrb');
+    const videoOverlay = document.getElementById('videoOverlay');
+    const helpVideo = document.getElementById('helpVideo');
+    const videoClose = document.getElementById('videoClose');
+
+    function openVideo() {
+      videoOverlay.classList.add('active');
+      helpVideo.currentTime = 0;
+      helpVideo.play().catch(() => {});
+    }
+
+    function closeVideo() {
+      videoOverlay.classList.add('fading');
+      videoOverlay.classList.remove('active');
+      setTimeout(() => {
+        helpVideo.pause();
+        helpVideo.currentTime = 0;
+        videoOverlay.classList.remove('fading');
+      }, 900);
+    }
+
+    helpOrb.addEventListener('click', openVideo);
+    videoClose.addEventListener('click', closeVideo);
+
+    helpVideo.addEventListener('ended', closeVideo);
+
+    videoOverlay.addEventListener('click', function(e) {
+      if (e.target === videoOverlay) closeVideo();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeVideo();
+    });
+  </script>
+
 </body>
-</html>      
+</html>
