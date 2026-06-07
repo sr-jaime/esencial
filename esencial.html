@@ -512,9 +512,128 @@
         font-size: 15px;
       }
     }
+
+    /* ==================== HELP ORB ==================== */
+    #helpOrb {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #6EC6FF, #1A7FD4 55%, #0A3A6E);
+      box-shadow:
+        0 0 18px rgba(110, 198, 255, 0.9),
+        0 0 40px rgba(110, 198, 255, 0.55),
+        0 0 70px rgba(110, 198, 255, 0.25);
+      cursor: pointer;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      animation: helpOrbPulse 2.4s ease-in-out infinite;
+      transition: transform 0.2s ease;
+    }
+
+    #helpOrb:hover {
+      transform: scale(1.12);
+    }
+
+    #helpOrb:active {
+      transform: scale(0.95);
+    }
+
+    #helpOrb span {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 0 0 10px rgba(255,255,255,0.8);
+      user-select: none;
+    }
+
+    @keyframes helpOrbPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 18px rgba(110, 198, 255, 0.9),
+          0 0 40px rgba(110, 198, 255, 0.55),
+          0 0 70px rgba(110, 198, 255, 0.25);
+      }
+      50% {
+        box-shadow:
+          0 0 28px rgba(110, 198, 255, 1),
+          0 0 60px rgba(110, 198, 255, 0.8),
+          0 0 100px rgba(110, 198, 255, 0.4);
+      }
+    }
+
+    /* ==================== VIDEO OVERLAY ==================== */
+    #videoOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #videoOverlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #videoOverlay video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #closeVideoBtn {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      background: rgba(255, 0, 0, 0.12);
+      border: 1.5px solid rgba(255, 0, 0, 0.35);
+      color: #fff;
+      font-size: 22px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      z-index: 1001;
+      line-height: 1;
+    }
+
+    #closeVideoBtn:hover {
+      background: rgba(255, 1, 1, 0.25);
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
+
+  <!-- Help Orb -->
+  <button id="helpOrb" onclick="openHelpVideo()" aria-label="Ayuda">
+    <span>?</span>
+  </button>
+
+  <!-- Video Overlay -->
+  <div id="videoOverlay">
+    <button id="closeVideoBtn" onclick="closeHelpVideo()">✕</button>
+    <video id="helpVideo" playsinline>
+      <source src="QUIO.mp4" type="video/mp4">
+    </video>
+  </div>
 
   <div class="share-success-modal" id="shareSuccessModal">
     <div class="share-success-content">
@@ -1116,6 +1235,24 @@
     t.className = 'toast' + (isError ? ' error' : '');
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3400);
+  }
+
+  // ─── HELP VIDEO OVERLAY ──────────────────────────────────────────────────────
+  function openHelpVideo() {
+    const overlay = document.getElementById('videoOverlay');
+    const video   = document.getElementById('helpVideo');
+    overlay.classList.add('visible');
+    video.currentTime = 0;
+    video.play().catch(() => {});
+    video.onended = () => closeHelpVideo();
+  }
+
+  function closeHelpVideo() {
+    const overlay = document.getElementById('videoOverlay');
+    const video   = document.getElementById('helpVideo');
+    overlay.classList.remove('visible');
+    video.pause();
+    video.currentTime = 0;
   }
 
   window.addEventListener('beforeunload', () => {
